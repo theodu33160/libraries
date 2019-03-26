@@ -1,15 +1,19 @@
-#include "PS2Mouse.h"
+#include "PS2MouseEgab.h"
 
-PS2Mouse::PS2Mouse(int clk, int data){
+PS2MouseEgab::PS2MouseEgab(int clk, int data, int n){
   _ps2clk=clk;
   _ps2data=data;
   gohi(_ps2clk);
-  gohi(_ps2data);  
+  gohi(_ps2data);
+  m_n=n;
+  m_x=0;
+  m_y=0;
+
 }
 
-void PS2Mouse::write(uint8_t data){
+void PS2MouseEgab::write(uint8_t data){ // Attention prend au moins 660 µs
   uint8_t parity=1;
-  
+  int temps_absolu = micros();
   gohi(_ps2data);
   gohi(_ps2clk);
   delayMicroseconds(300);
@@ -45,7 +49,7 @@ void PS2Mouse::write(uint8_t data){
   golo(_ps2clk);
 }
 
-uint8_t PS2Mouse::read(void){
+uint8_t PS2MouseEgab::read(void){   // Attention prend au moins 55 µs
   uint8_t data=0, bit=1;
  
   gohi(_ps2clk);
@@ -73,7 +77,7 @@ uint8_t PS2Mouse::read(void){
   return data;
 }
 
-void PS2Mouse::begin(void){
+void PS2MouseEgab::begin(void){
   write(0xFF);
   for(int i=0; i<3; i++) read();
   write(0xF0);
@@ -81,33 +85,54 @@ void PS2Mouse::begin(void){
   delayMicroseconds(100);
 }
 
-void PS2Mouse::getPosition(uint8_t &stat, int &x, int &y){
-  write(0xEB);
-  read();
-  stat=read();
-  uint8_t _x=read();
-  uint8_t _y=read();  
-
-  bool negx=bitRead(stat,4);
-  bool negy=bitRead(stat,5);
-  x=twos(_x, negx);
-  y=twos(_y, negy);
+void PS2MouseEgab::actualiserPosition(){
+  write(0xEB); // Attention prend 660 µs
+  read();      // Attention prend 55 µs
+  m_stat=read(); // Attention prend 55 µs
+  uint8_t dataX=read(); // Attention prend 55 µs
+  uint8_t dataY=read(); // Attention prend 55 µs Donc au total l'actualisation de la position d'une souris prend 880µs ~ 1ms (ça passe mais voir si on peut optimiser)
+  bool negx=bitRead(m_stat,4);
+  bool negy=bitRead(m_stat,5);
+  int DX = (int)dataX;
+  int DY = (int)dataY;
+  if(negx) DX|=0xFF00;
+  if(negy) DY|=0xFF00;
+  m_dx=((float)DX/m_n);
+  m_dy=((float)DY/m_n);
+  m_x+=m_dx;
+  m_y+=m_dy;
 }
 
-void PS2Mouse::golo(int pin){
+void PS2MouseEgab::golo(int pin){
   pinMode(pin, OUTPUT);
   digitalWrite(pin, LOW);
 }
 
-void PS2Mouse::gohi(int pin){
+void PS2MouseEgab::gohi(int pin){
   pinMode(pin, INPUT);
   digitalWrite(pin, HIGH);
 }
 
-const int m=0x100;
-int PS2Mouse::twos(uint8_t value, bool sign){
-  int v=(int)value;
-  if(sign) v|=0xFF00;
-  return v;
+
+float PS2MouseEgab::getPositionX(){
+    return m_x;
 }
 
+float PS2MouseEgab::getPositionY(){
+    return m_y;
+}
+
+float PS2MouseEgab::getDX(){
+    return m_dx;
+}
+
+float PS2MouseEgab::getDY(){
+    return m_dy;
+}
+
+void  PS2MouseEgab::setPositionX(float x){
+    m_x=x;
+}
+void  PS2MouseEgab::setPositionY(float y){
+    m_x=y;
+}
