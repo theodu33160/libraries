@@ -1,0 +1,10 @@
+DCMotor			KEYWORD1
+actualiserVitesse	KEYWORD2
+tourneRPM		KEYWORD2
+envoiCommande		KEYWORD2
+codeurIncrementalA	KEYWORD2
+codeurIncrementalB	KEYWORD2
+getCodeur		KEYWORD2
+getVitesse		KEYWORD2
+setPID			KEYWORD2
+setDivisionFrequence	KEYWORD2
