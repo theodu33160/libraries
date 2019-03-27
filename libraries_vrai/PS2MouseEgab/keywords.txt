@@ -1,0 +1,9 @@
+PS2MouseEgab	KEYWORD1
+write			KEYWORD2
+read			KEYWORD2
+begin			KEYWORD2
+actualiserPosition	KEYWORD2
+getPositionX		KEYWORD2
+getPositionY		KEYWORD2
+setPositionX		KEYWORD2
+setPositionY		KEYWORD2

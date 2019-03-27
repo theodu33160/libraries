@@ -1,0 +1,20 @@
+BaseRoulantePontEnH	KEYWORD1
+avancerTourner		KEYWORD2
+avancer			KEYWORD2
+tournerPrecis		KEYWORD2
+suivrePoint		KEYWORD2
+allerRetour		KEYWORD2
+actualiserPosition	KEYWORD2
+setPosition		KEYWORD2
+getPosX			KEYWORD2
+getPosY			KEYWORD2
+getAngle		KEYWORD2
+setAcceleration		KEYWORD2
+setDistanceCorrecteur	KEYWORD2
+setAngleCorrecteur	KEYWORD2
+
+getRapportAvancerTourner	KEYWORD2
+setRapportAvancerTourner	KEYWORD2
+getBattery		KEYWORD2
+modulo180		KEYWORD2
+debug			KEYWORD2
