@@ -57,43 +57,43 @@ void Robot::debug()
     if (!Serial.available()) Serial.begin(1000000);
     //Serial.print("temps\t");
     Serial.print(millis());
-/*    Serial.print("\tX ");
+    Serial.print("\tX ");
     Serial.print(m_posX);
     Serial.print("\tY ");
     Serial.print(m_posY);
     Serial.print("\t° ");
     Serial.print(m_angle);
-*/
-/*
+
+
     Serial.print("\t\tC_rot° ");
-    Serial.print(m_vitesseRotationSvrPt*m_#include "Arduino.h"+m_vitesseRotation*(1-m_#include "Arduino.h"));
+    Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
     Serial.print("\tC_vit ");
     Serial.print(m_vitesseMoyenne);
     Serial.print("\tC_angle :");
-    Serial.print(m_consigneAngleSvrPt*m_#include "Arduino.h"+m_consigneAngle*(1-m_#include "Arduino.h"));
+    Serial.print(m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt));
     Serial.print("\td ");
     Serial.print(m_distance);
     Serial.print("\t#");
     Serial.print(m_etape);
-*/
+/*
     Serial.print("\t");
     Serial.print(m_angleComputedSvrPt);
     Serial.print(m_angleComputedSvrPt);
-
+*/
     Serial.println();
 }
 
 void Robot::reglagePinceManuel()
 {
     if (!digitalRead(pinSerragePince) and pinceDebloquee)
-      {
+      {// On serre la pince
         digitalWrite(ledEtape2,HIGH);   // led jaune debug
         digitalWrite(ledEtape4, LOW);
         sensMoteurPince(1);//sens qui serre la pince
         analogWrite(pinInputPince, 255);
         delay(50);
         //blocage moteur
-        if (analogRead(pinCapteurPince) > 80)
+        if (analogRead(pinCapteurPince) > 1000) //80
         {
           digitalWrite(ledEtape1, HIGH); // allumage led verte
           pinceDebloquee = false;
@@ -105,7 +105,7 @@ void Robot::reglagePinceManuel()
         }
         deblocageOuverture = true;
       }
-    else if (!digitalRead(pinOuverturePince) and deblocageOuverture)// on dessert la pince
+    else if (!digitalRead(pinOuverturePince) and deblocageOuverture)// on desserre la pince
       {
         digitalWrite(ledEtape2,LOW);
         pinceDebloquee = true;
@@ -114,7 +114,7 @@ void Robot::reglagePinceManuel()
         delay(50);
         digitalWrite(ledEtape4, HIGH); // led bleue debug
         // blocage à l'ouverture
-        if (analogRead(pinCapteurPince) > 70)
+        if (analogRead(pinCapteurPince) > 700) //70
         {
           digitalWrite(ledEtape1, HIGH); // allumage led
           deblocageOuverture = false;
