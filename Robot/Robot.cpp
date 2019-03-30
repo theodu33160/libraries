@@ -65,20 +65,15 @@ void Robot::debug()
     Serial.print(m_angle);
 
     Serial.print("\t\tC_rot° ");
-    Serial.print(m_vitesseRotationSvrPt);
+    Serial.print(m_vitesseRotationSvrPt*modeSvrPt+m_vitesseRotation*(1-modeSvrPt));
     Serial.print("\tC_vit ");
     Serial.print(m_vitesseMoyenne);
-    /*
     Serial.print("\tC_angle :");
-    Serial.print(m_consigneAngleSvrPt);
+    Serial.print(m_consigneAngleSvrPt*modeSvrPt+m_consigneAngle*(1-modeSvrPt));
     Serial.print("\td ");
     Serial.print(m_distance);
-
-    Serial.print("\tetape");
-    Serial.println(m_etape);
-    */
-    Serial.print("\tVg ");
-    Serial.print(m_roueGauche->getVitesse());
+    Serial.print("\t#");
+    Serial.print(m_etape);
 
     //Serial.print("\t");
     //Serial.print(m_angleComputedSvrPt);
@@ -416,6 +411,7 @@ void Robot::actualiserPosition() // tourne Ã  une visteese x1 pour le moteur 1 
 
 bool Robot::tournerPrecis(float theta, float precision) // le robot vise l'angle theta en radians
 {
+  modeSvrPt = false;
   m_consigneAngle = modulo180(theta);
   correctionAngle.Compute();
   if (abs(theta - m_angle) <= precision) {
@@ -430,16 +426,18 @@ bool Robot::tournerPrecis(float theta, float precision) // le robot vise l'angle
 
 bool Robot::suivrePoint(float xCible, float yCible, float precision)
 {
+  modeSvrPt = true;
   int diff = millis() - m_lastTime;
   if (diff > 10*m_periode)  m_lastTime = millis() - m_periode;
   if(diff>=m_periode)
   {
           m_distance = sqrt(pow((m_posX - xCible), 2) + pow((m_posY - yCible), 2));
-          int sens = ((cos(PI/180*m_angle) * (xCible - m_posX) + sin(PI/180*m_angle) * (yCible - m_posY) ) > 0 ) * 2 - 1; // produit scalaire pour savoir si le robot a dépasser la cible
+          int sens = ((cos(PI/180*m_angle) * (xCible - m_posX) + sin(PI/180*m_angle) * (yCible - m_posY) ) > 0 ) * 2 - 1; // produit scalaire pour savoir si le robot a dépassé la cible
           m_distance = - sens * m_distance;
           m_distanceComputed = correctionDistance.Compute();
 
           m_consigneAngleSvrPt = 180/PI*atan((yCible - m_posY) / (xCible - m_posX));
+          if(abs(modulo180(m_angle-m_consigneAngleSvrPt))>90) m_consigneAngleSvrPt=modulo180(180+m_consigneAngleSvrPt);
           m_angleComputedSvrPt = correctionAngleSvrPt.Compute();
 
           m_lastTime +=m_periode;
@@ -452,7 +450,7 @@ bool Robot::suivrePoint(float xCible, float yCible, float precision)
   if (abs(m_distance) >= precision) //vérifier que abs fonctionne tout le temps avec un float !
   {
       digitalWrite(ledEtapeFinie, LOW);
-      Robot::avancerTourner(int(m_vitesseMoyenne / (1 + abs(m_vitesseRotationSvrPt)*0*m_rapportAvancerTourner)), -180/PI*m_vitesseRotationSvrPt);
+      Robot::avancerTourner(int(m_vitesseMoyenne / (1 + abs(m_vitesseRotationSvrPt)*m_rapportAvancerTourner)), -m_vitesseRotationSvrPt);
       return false;
   }
   else
@@ -548,7 +546,7 @@ void Robot::setAngleSvrPtCorrecteur(float kp, float ki, float kd)
     correctionAngleSvrPt.SetTunings(kp,ki,kd);
 }
 
-float Robot::modulo180(float angle)
+float Robot::modulo180(float angle) //retourne un angle entre -180 et 180°
 {
   return angle - 360 * floor((angle + 180) / 360);
 }
