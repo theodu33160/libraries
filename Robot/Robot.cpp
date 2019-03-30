@@ -1,3 +1,4 @@
+
 #include <Robot.h>
 
 
@@ -57,26 +58,28 @@ void Robot::debug()
     if (!Serial.available()) Serial.begin(1000000);
     //Serial.print("temps\t");
     Serial.print(millis());
-    Serial.print("\tX ");
+/*    Serial.print("\tX ");
     Serial.print(m_posX);
     Serial.print("\tY ");
     Serial.print(m_posY);
     Serial.print("\t° ");
     Serial.print(m_angle);
-
+*/
+/*
     Serial.print("\t\tC_rot° ");
-    Serial.print(m_vitesseRotationSvrPt*modeSvrPt+m_vitesseRotation*(1-modeSvrPt));
+    Serial.print(m_vitesseRotationSvrPt*m_#include "Arduino.h"+m_vitesseRotation*(1-m_#include "Arduino.h"));
     Serial.print("\tC_vit ");
     Serial.print(m_vitesseMoyenne);
     Serial.print("\tC_angle :");
-    Serial.print(m_consigneAngleSvrPt*modeSvrPt+m_consigneAngle*(1-modeSvrPt));
+    Serial.print(m_consigneAngleSvrPt*m_#include "Arduino.h"+m_consigneAngle*(1-m_#include "Arduino.h"));
     Serial.print("\td ");
     Serial.print(m_distance);
     Serial.print("\t#");
     Serial.print(m_etape);
-
-    //Serial.print("\t");
-    //Serial.print(m_angleComputedSvrPt);
+*/
+    Serial.print("\t");
+    Serial.print(m_angleComputedSvrPt);
+    Serial.print(m_angleComputedSvrPt);
 
     Serial.println();
 }
@@ -411,7 +414,7 @@ void Robot::actualiserPosition() // tourne Ã  une visteese x1 pour le moteur 1 
 
 bool Robot::tournerPrecis(float theta, float precision) // le robot vise l'angle theta en radians
 {
-  modeSvrPt = false;
+  m_modeSvrPt= false;
   m_consigneAngle = modulo180(theta);
   correctionAngle.Compute();
   if (abs(theta - m_angle) <= precision) {
@@ -426,10 +429,13 @@ bool Robot::tournerPrecis(float theta, float precision) // le robot vise l'angle
 
 bool Robot::suivrePoint(float xCible, float yCible, float precision)
 {
-  modeSvrPt = true;
+  m_modeSvrPt = true;
+  /*
   int diff = millis() - m_lastTime;
-  if (diff > 10*m_periode)  m_lastTime = millis() - m_periode;
+  if (diff > 3*m_periode)  m_lastTime = millis() - m_periode;
   if(diff>=m_periode)
+  */
+  if (true)
   {
           m_distance = sqrt(pow((m_posX - xCible), 2) + pow((m_posY - yCible), 2));
           int sens = ((cos(PI/180*m_angle) * (xCible - m_posX) + sin(PI/180*m_angle) * (yCible - m_posY) ) > 0 ) * 2 - 1; // produit scalaire pour savoir si le robot a dépassé la cible
@@ -583,3 +589,4 @@ void Robot::setIntegralSaturation(float sat)
     correctionAngle.SetIntegralSaturation(sat);
     correctionDistance.SetIntegralSaturation(sat);
 }
+

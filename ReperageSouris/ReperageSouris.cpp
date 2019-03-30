@@ -2,6 +2,7 @@
 
 
 ReperageSouris::ReperageSouris(PS2MouseEgab* mouse1, PS2MouseEgab* mouse2, float alpha, float distanceSouris){
+
   m_mouse1 = mouse1;
   m_mouse2 = mouse2;
   m_x=0;
@@ -9,6 +10,7 @@ ReperageSouris::ReperageSouris(PS2MouseEgab* mouse1, PS2MouseEgab* mouse2, float
   m_theta=0;
   m_alpha=alpha;
   m_distanceSouris=distanceSouris;
+
 }
 
 void  ReperageSouris::actualiserPosition(){
@@ -44,6 +46,7 @@ float ReperageSouris::getPositionY(){
 
 float ReperageSouris::getAngle(){
     return (180/PI)*m_theta;
+
 }
 
 void  ReperageSouris::setPositionX(float x){
@@ -53,6 +56,7 @@ void  ReperageSouris::setPositionX(float x){
 void  ReperageSouris::setPositionY(float y){
     m_x=y;
 }
+
 
 void  ReperageSouris::setAngle(float theta){
     m_theta=theta;

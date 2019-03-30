@@ -1,4 +1,5 @@
-ReperageSouris		KEYWORD1
+
+ReperageSouris	KEYWORD1
 actualiserPosition	KEYWORD2
 getPositionX		KEYWORD2
 getPositionY		KEYWORD2

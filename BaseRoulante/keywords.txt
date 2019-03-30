@@ -1,0 +1,20 @@
+
+BaseRoulante	KEYWORD1
+avancerTourner	KEYWORD2
+tournerPrecis	KEYWORD2
+actualiserPosition	KEYWORD2
+setDebugOn	KEYWORD2
+setDebugOff	KEYWORD2
+setPosition	KEYWORD2
+setAcceleration	KEYWORD2
+setDistanceCorrecteur	KEYWORD2
+emptyCard	KEYWORD2
+getBattery	KEYWORD2
+setMode		KEYWORD2
+resetEncoders	KEYWORD2
+setAutoRegulation	KEYWORD2
+setNoAutoRegulation	KEYWORD2
+setAutoStopMotors	KEYWORD2
+setNoAutoStopMotors	KEYWORD2
+getEncoder	KEYWORD2
+moduloPI	KEYWORD2

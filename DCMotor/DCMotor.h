@@ -19,6 +19,9 @@ public:
 
     long getCodeur();
     float getVitesse();
+
+    float getReducteur();
+
     void setPID(float kp, float ki, float kd);
     void setDivisionFrequence(byte facteur);
     void setPeriode(int periode);
