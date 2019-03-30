@@ -2,10 +2,10 @@
 #define ROBOT_H
 
 
+#include "Arduino.h"
 #include<DCMotor.h>
 #include "PS2MouseEgab.h"
 #include <PID_v1.h>
-#include "Arduino.h"
 
 class Robot
 {
@@ -78,7 +78,7 @@ private :
 
 
     float m_empattement;        //distance entre le centre de rotation du robot et une roue en mm !
-    float m_rayon;         //rayon des roues en mm
+    float m_rayon; //37.64         //rayon des roues en mm
     double m_angle; // = 0                        // Sotck l'angle du robot au cours du temps, il va quand mÃªme rester Ã  dÃ©finir un cotÃ© + et un -
     double m_posX; //
     double m_posY; // =
@@ -106,7 +106,7 @@ private :
     float m_KiSvrPt = 0.005;
     float m_KdSvrPt = 0;
     bool m_angleComputedSvrPt;
-    bool modeSvrPt;
+    bool m_modeSvrPt;
 
     double m_consigneDistance = 0; //consigne pour le PID en distance
     double m_distance;   // entrée du PID
