@@ -30,6 +30,7 @@ public :
     void setAngleSvrPtCorrecteur(float kp, float ki, float kd);
     void setIntegralSaturation(float sat);
     void sensMoteurPince(int sens);
+    bool obstaclePince();
 
     float getRapportAvancerTourner();
     void setRapportAvancerTourner(float r);
@@ -62,8 +63,9 @@ private :
     byte pinIN1Pince = 42;
     byte pinIN2Pince = 40;
     byte pinCapteurPince = 15;
-    bool pinceDebloquee = true;
-    bool deblocageOuverture = true;
+    int m_seuilBlocagePince = 70;
+    bool m_fermetureBloquee = true;
+    bool m_ouvertureBloquee = true;
     unsigned long debutOuverturePince = 0;
     unsigned long debutFermeturePince = 0;
 
