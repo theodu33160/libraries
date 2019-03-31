@@ -1,3 +1,3 @@
 # libraries
 
-libraries for arduino for E-Gab at the national cup of robotique
+libraries for arduino for E-Gab at the national cup of robotics
