@@ -29,8 +29,6 @@ public :
     void setDistanceCorrecteur(float kp, float ki, float kd);    //P, I, D
     void setAngleSvrPtCorrecteur(float kp, float ki, float kd);
     void setIntegralSaturation(float sat);
-    void sensMoteurPince(int sens);
-    bool obstaclePince();
 
     float getRapportAvancerTourner();
     void setRapportAvancerTourner(float r);
@@ -44,6 +42,10 @@ public :
 
     bool tirageTirette();
     void reglagePinceManuel();
+    void sensMoteurPince(int sens);
+    void serrerPince();
+    void desserrerPince();
+    bool obstaclePince();
 
 private :
     DCMotor* m_roueGauche;
