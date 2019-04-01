@@ -101,7 +101,7 @@ void Robot::reglagePinceManuel()
       }
 }
 
-void Robot::serrerPince()
+bool Robot::serrerPince()
 {
     if (!m_fermetureBloquee)
     {
@@ -116,15 +116,17 @@ void Robot::serrerPince()
           digitalWrite(ledEtape1, HIGH); // allumage led verte de blocage
           m_fermeturebloquee = true;
           analogWrite(pinInputPince, 0);
+          return true;
         }
         else
         {
           digitalWrite(ledEtape1, LOW); // extinction de la led verte de blocage
+          return false;
         }
     }
 }
 
-void Robot::desserrerPince()
+bool Robot::desserrerPince()
 {
     if (!m_ouvertureBloquee)
     {
@@ -139,10 +141,12 @@ void Robot::desserrerPince()
           digitalWrite(ledEtape1, HIGH); // allumage led verte de blocage
           m_ouvertureBloquee = true;
           analogWrite(pinInputPince, 0);
+          return true;
         }
         else
         {
           digitalWrite(ledEtape1, LOW); // extinction de la led verte de blocage
+          return false;
         }
     }
 }
@@ -168,6 +172,12 @@ bool Robot::obstaclePince()
     int m3 = analogRead(pinCapteurPince);
     if (m1+m2+m3)>3*m_seuilBlocagePince) return true;
     else return false;
+}
+
+void Robot::ignoreCapteurPince()
+{
+    m_ouvertureBloquee = false;
+    m_fermeturebloquee = false;
 }
 
 void Robot::initLeds()

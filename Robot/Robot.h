@@ -43,9 +43,10 @@ public :
     bool tirageTirette();
     void reglagePinceManuel();
     void sensMoteurPince(int sens);
-    void serrerPince();
-    void desserrerPince();
+    bool serrerPince();
+    bool desserrerPince();
     bool obstaclePince();
+    void ignoreCapteurPince();
 
 private :
     DCMotor* m_roueGauche;
