@@ -58,81 +58,111 @@ void Robot::debug()
     if (!Serial.available()) Serial.begin(1000000);
     //Serial.print("temps\t");
     Serial.print(millis());
-/*    Serial.print("\tX ");
+    Serial.print("\tX ");
     Serial.print(m_posX);
     Serial.print("\tY ");
     Serial.print(m_posY);
     Serial.print("\t° ");
     Serial.print(m_angle);
-*/
-/*
+
+
     Serial.print("\t\tC_rot° ");
-    Serial.print(m_vitesseRotationSvrPt*m_#include "Arduino.h"+m_vitesseRotation*(1-m_#include "Arduino.h"));
+    Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
     Serial.print("\tC_vit ");
     Serial.print(m_vitesseMoyenne);
     Serial.print("\tC_angle :");
-    Serial.print(m_consigneAngleSvrPt*m_#include "Arduino.h"+m_consigneAngle*(1-m_#include "Arduino.h"));
+    Serial.print(m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt));
     Serial.print("\td ");
     Serial.print(m_distance);
     Serial.print("\t#");
     Serial.print(m_etape);
-*/
+/*
     Serial.print("\t");
     Serial.print(m_angleComputedSvrPt);
     Serial.print(m_angleComputedSvrPt);
-
+*/
     Serial.println();
 }
 
 void Robot::reglagePinceManuel()
 {
-    if (!digitalRead(pinSerragePince) and pinceDebloquee)
-      {
-        digitalWrite(ledEtape2,HIGH);   // led jaune debug
-        digitalWrite(ledEtape4, LOW);
-        sensMoteurPince(1);//sens qui serre la pince
-        analogWrite(pinInputPince, 255);
-        delay(50);
-        //blocage moteur
-        if (analogRead(pinCapteurPince) > 80)
-        {
-          digitalWrite(ledEtape1, HIGH); // allumage led verte
-          pinceDebloquee = false;
-          analogWrite(pinInputPince, 0);
-        }
-        else
-        {
-          digitalWrite(ledEtape1, LOW); // extinction de la led verte
-        }
-        deblocageOuverture = true;
+    if (!digitalRead(pinSerragePince))
+      {// On serre la pince
+        Robot::serrerPince();
       }
-    else if (!digitalRead(pinOuverturePince) and deblocageOuverture)// on dessert la pince
+    else if (!digitalRead(pinOuverturePince))// on desserre la pince
       {
-        digitalWrite(ledEtape2,LOW);
-        pinceDebloquee = true;
-        sensMoteurPince(-1);//sens qui desserre la pince
-        analogWrite(pinInputPince, 255);
-        delay(50);
-        digitalWrite(ledEtape4, HIGH); // led bleue debug
-        // blocage à l'ouverture
-        if (analogRead(pinCapteurPince) > 70)
-        {
-          digitalWrite(ledEtape1, HIGH); // allumage led
-          deblocageOuverture = false;
-          analogWrite(pinInputPince, 0);
-        }
-        else
-        {
-          digitalWrite(ledEtape1, LOW); // extinction de la led
-        }
-
+        Robot::desserrerPince();
       }
       else
       {
-        digitalWrite(ledEtape2,LOW);
-        digitalWrite(ledEtape4, LOW);
+        digitalWrite(ledON,LOW);
+        digitalWrite(ledEtape2,LOW); //led fermeture
+        digitalWrite(ledEtape4, LOW); //led ouverture
         analogWrite(pinInputPince, 0);
+        debutOuverturePince = 0;  //permet de continuer à ouvrir la pince si on le fait en plusieurs temps
+        debutFermeturePince = 0;
       }
+}
+
+bool Robot::serrerPince()
+{
+    if (debutFermeturePince==0) // première fois que l'on rentre dans serrerPince
+    {
+        debutFermeturePince=millis();
+        digitalWrite(ledEtape2,HIGH);   // led jaune fermeture pince
+        digitalWrite(ledEtape4, LOW);   // led serrage bleue
+        m_ouvertureBloquee = false;
+        sensMoteurPince(1);//sens qui serre la pince
+        debutOuverturePince = 0;
+    }
+    if (!m_fermetureBloquee)
+    {
+        analogWrite(pinInputPince, 255); // permet de tester le capteur et envoie la puissance au moteur
+        //blocage moteur
+        if (obstaclePince()) // seuil de 80
+        {
+          digitalWrite(ledEtape1, HIGH); // allumage led verte de blocage
+          m_fermetureBloquee = true;
+          analogWrite(pinInputPince, 0);
+          return true;
+        }
+        else
+        {
+          digitalWrite(ledEtape1, LOW); // extinction de la led verte de blocage
+          return false;
+        }
+    }
+}
+
+bool Robot::desserrerPince()
+{
+    if (debutOuverturePince==0) // première fois que l'on rentre dans serrerPince
+    {
+        debutOuverturePince=millis();
+        digitalWrite(ledEtape2,LOW); //led jaune fermeture pince
+        digitalWrite(ledEtape4, HIGH); // led bleue ouverture pince
+        m_fermetureBloquee = false;
+        sensMoteurPince(-1);//sens qui desserre la pince
+        debutFermeturePince=0;
+    }
+        if (!m_ouvertureBloquee)
+    {
+        analogWrite(pinInputPince, 255);// permet de tester le capteur et envoie la puissance au moteur
+        // blocage à l'ouverture
+        if (obstaclePince()) //seuil d'ouverture  = 70
+        {
+          digitalWrite(ledEtape1, HIGH); // allumage led verte de blocage
+          m_ouvertureBloquee = true;
+          analogWrite(pinInputPince, 0);
+          return true;
+        }
+        else
+        {
+          digitalWrite(ledEtape1, LOW); // extinction de la led verte de blocage
+          return false;
+        }
+    }
 }
 
 void Robot::sensMoteurPince(int sens)
@@ -149,6 +179,26 @@ void Robot::sensMoteurPince(int sens)
   }
 }
 
+bool Robot::obstaclePince()
+{
+    int seuil;
+    int m1 = analogRead(pinCapteurPince);
+    int m2 = analogRead(pinCapteurPince);
+    int m3 = analogRead(pinCapteurPince);
+    if (millis()-debutOuverturePince-debutFermeturePince<tempsDemarrageMoteur)
+    {
+        seuil = m_seuilBlocagePinceHaut;
+    }
+    else seuil = m_seuilBlocagePinceBas;
+    if (m1+m2+m3>3*seuil) return true;
+    else return false;
+}
+
+void Robot::ignoreCapteurPince()
+{
+    m_ouvertureBloquee = false;
+    m_fermetureBloquee = false;
+}
 
 void Robot::initLeds()
 {

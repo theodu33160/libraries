@@ -29,7 +29,6 @@ public :
     void setDistanceCorrecteur(float kp, float ki, float kd);    //P, I, D
     void setAngleSvrPtCorrecteur(float kp, float ki, float kd);
     void setIntegralSaturation(float sat);
-    void sensMoteurPince(int sens);
 
     float getRapportAvancerTourner();
     void setRapportAvancerTourner(float r);
@@ -43,6 +42,11 @@ public :
 
     bool tirageTirette();
     void reglagePinceManuel();
+    void sensMoteurPince(int sens);
+    bool serrerPince();
+    bool desserrerPince();
+    bool obstaclePince();
+    void ignoreCapteurPince();
 
 private :
     DCMotor* m_roueGauche;
@@ -50,10 +54,11 @@ private :
     PS2MouseEgab* m_sourisGauche;
     PS2MouseEgab* m_sourisDroite;
 
-
+    // Variables TIERETTE
     byte pinDemarrageOutput = 48;
     byte pinDemarrageInput = 49;
 
+    //Variables PINCE
     byte pinOuverturePince = 45;
     byte pinSerragePince = 47;
     byte pinInterrupteurPince = 46;
@@ -61,9 +66,13 @@ private :
     byte pinIN1Pince = 42;
     byte pinIN2Pince = 40;
     byte pinCapteurPince = 15;
-    bool pinceDebloquee = true;
-    bool deblocageOuverture = true;
-
+    int m_seuilBlocagePinceBas = 80;
+    int m_seuilBlocagePinceHaut = 400;
+    bool m_fermetureBloquee = false;
+    bool m_ouvertureBloquee = false;
+    unsigned int tempsDemarrageMoteur = 70;
+    unsigned long debutOuverturePince = 0;
+    unsigned long debutFermeturePince = 0;
 
     // actuellement, les leds sont branché de 26 à 29 et de 35 à 38
     byte ledON = 26;
@@ -98,7 +107,6 @@ private :
     float m_Ki = 0.8;
     float m_Kd = 0;
     bool m_distanceComputed;
-
 
     double m_consigneAngleSvrPt; // consigne pour le correcteur PID en angle d'avancerTourner
     double m_vitesseRotationSvrPt; // sortie du PID pour régler l'angle absolu du robot
