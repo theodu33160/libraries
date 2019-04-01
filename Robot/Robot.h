@@ -66,9 +66,11 @@ private :
     byte pinIN1Pince = 42;
     byte pinIN2Pince = 40;
     byte pinCapteurPince = 15;
-    int m_seuilBlocagePince = 70;
-    bool m_fermetureBloquee = true;
-    bool m_ouvertureBloquee = true;
+    int m_seuilBlocagePinceBas = 80;
+    int m_seuilBlocagePinceHaut = 270;
+    bool m_fermetureBloquee = false;
+    bool m_ouvertureBloquee = false;
+    unsigned int tempsDemarrageMoteur = 20;
     unsigned long debutOuverturePince = 0;
     unsigned long debutFermeturePince = 0;
 
