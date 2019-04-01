@@ -89,9 +89,9 @@ void Robot::reglagePinceManuel()
       {// On serre la pince
         serrerPince();
       }
-    else if (!digitalRead(pinOuverturePince) and !m_ouvertureBloquee)// on desserre la pince
+    else if (!digitalRead(pinOuverturePince))// on desserre la pince
       {
-        desserrerPince()
+        desserrerPince();
       }
       else
       {
@@ -114,7 +114,7 @@ bool Robot::serrerPince()
         if (obstaclePince()) // seuil de 80
         {
           digitalWrite(ledEtape1, HIGH); // allumage led verte de blocage
-          m_fermeturebloquee = true;
+          m_fermetureBloquee = true;
           analogWrite(pinInputPince, 0);
           return true;
         }
@@ -170,14 +170,14 @@ bool Robot::obstaclePince()
     int m1 = analogRead(pinCapteurPince);
     int m2 = analogRead(pinCapteurPince);
     int m3 = analogRead(pinCapteurPince);
-    if (m1+m2+m3)>3*m_seuilBlocagePince) return true;
+    if (m1+m2+m3>3*m_seuilBlocagePince) return true;
     else return false;
 }
 
 void Robot::ignoreCapteurPince()
 {
     m_ouvertureBloquee = false;
-    m_fermeturebloquee = false;
+    m_fermetureBloquee = false;
 }
 
 void Robot::initLeds()
