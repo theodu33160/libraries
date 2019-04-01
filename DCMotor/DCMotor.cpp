@@ -4,11 +4,6 @@
 DCMotor::DCMotor(byte brochePWM, byte IN1, byte IN2, byte voieA, byte voieB)
 {
 
-    pinMode(brochePWM,OUTPUT);
-    pinMode(voieA,INPUT_PULLUP);
-    pinMode(voieB,INPUT_PULLUP);
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, LOW);
 
     m_broche = brochePWM;
     m_IN1 = IN1;
