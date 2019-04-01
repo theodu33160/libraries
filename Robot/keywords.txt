@@ -23,3 +23,11 @@ jeuLeds			KEYWORD2
 intiLeds		KEYWORD2
 allumerLeds		KEYWORD2
 eteindreLeds		KEYWORD2
+
+tirageTirette		KEYWORD2
+reglagePinceManuel	KEYWORD2
+sensMoteurPince		KEYWORD2
+serrerPince		KEYWORD2
+desserrerPince		KEYWORD2
+obstaclePince		KEYWORD2
+ignoreCapteurPince	KEYWORD2
