@@ -88,6 +88,9 @@ void Robot::reglagePinceManuel()
     if (!digitalRead(pinSerragePince))
       {// On serre la pince
         Robot::serrerPince();
+        allumerLeds();
+        delay(100);
+        eteindreLeds();
       }
     else if (!digitalRead(pinOuverturePince))// on desserre la pince
       {
@@ -98,8 +101,8 @@ void Robot::reglagePinceManuel()
         digitalWrite(ledEtape2,LOW); //led fermeture
         digitalWrite(ledEtape4, LOW); //led ouverture
         analogWrite(pinInputPince, 0);
-//        debutOuverturePince = 0;
-//        debutFermeturePince = 0;
+        debutOuverturePince = 0;
+        debutFermeturePince = 0;
       }
 }
 
@@ -173,11 +176,16 @@ void Robot::sensMoteurPince(int sens)
 
 bool Robot::obstaclePince()
 {
+    int seuil;
     int m1 = analogRead(pinCapteurPince);
     int m2 = analogRead(pinCapteurPince);
     int m3 = analogRead(pinCapteurPince);
     if (millis()-debutOuverturePince-debutFermeturePince<tempsDemarrageMoteur)
-    if (m1+m2+m3>3*m_seuilBlocagePince) return true;
+    {
+        seuil = m_seuilBlocagePinceHaut;
+    }
+    else seuil = m_seuilBlocagePinceBas;
+    if (m1+m2+m3>3*seuil) return true;
     else return false;
 }
 
