@@ -88,9 +88,6 @@ void Robot::reglagePinceManuel()
     if (!digitalRead(pinSerragePince))
       {// On serre la pince
         Robot::serrerPince();
-        allumerLeds();
-        delay(100);
-        eteindreLeds();
       }
     else if (!digitalRead(pinOuverturePince))// on desserre la pince
       {
@@ -98,23 +95,25 @@ void Robot::reglagePinceManuel()
       }
       else
       {
+        digitalWrite(ledON,LOW);
         digitalWrite(ledEtape2,LOW); //led fermeture
         digitalWrite(ledEtape4, LOW); //led ouverture
         analogWrite(pinInputPince, 0);
-        debutOuverturePince = 0;
+        debutOuverturePince = 0;  //permet de continuer à ouvrir la pince si on le fait en plusieurs temps
         debutFermeturePince = 0;
       }
 }
 
 bool Robot::serrerPince()
 {
-    if (debutFermeturePince=0) // première fois que l'on rentre dans serrerPince
+    if (debutFermeturePince==0) // première fois que l'on rentre dans serrerPince
     {
         debutFermeturePince=millis();
         digitalWrite(ledEtape2,HIGH);   // led jaune fermeture pince
         digitalWrite(ledEtape4, LOW);   // led serrage bleue
-        sensMoteurPince(1);//sens qui serre la pince
         m_ouvertureBloquee = false;
+        sensMoteurPince(1);//sens qui serre la pince
+        debutOuverturePince = 0;
     }
     if (!m_fermetureBloquee)
     {
@@ -137,12 +136,17 @@ bool Robot::serrerPince()
 
 bool Robot::desserrerPince()
 {
-    if (!m_ouvertureBloquee)
+    if (debutOuverturePince==0) // première fois que l'on rentre dans serrerPince
     {
+        debutOuverturePince=millis();
         digitalWrite(ledEtape2,LOW); //led jaune fermeture pince
         digitalWrite(ledEtape4, HIGH); // led bleue ouverture pince
         m_fermetureBloquee = false;
         sensMoteurPince(-1);//sens qui desserre la pince
+        debutFermeturePince=0;
+    }
+        if (!m_ouvertureBloquee)
+    {
         analogWrite(pinInputPince, 255);// permet de tester le capteur et envoie la puissance au moteur
         // blocage à l'ouverture
         if (obstaclePince()) //seuil d'ouverture  = 70
