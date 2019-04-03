@@ -85,6 +85,7 @@ void Robot::debug()
 
 void Robot::reglagePinceManuel()
 {
+    digitalWrite(ledArretUrgence,LOW);
     if (!digitalRead(pinSerragePince))
       {// On serre la pince
         Robot::serrerPince();
@@ -197,6 +198,7 @@ void Robot::ignoreCapteurPince()
 {
     m_ouvertureBloquee = false;
     m_fermetureBloquee = false;
+    digitalWrite(ledArretUrgence,HIGH);
 }
 
 void Robot::initLeds()
