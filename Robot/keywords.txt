@@ -31,3 +31,5 @@ serrerPince		KEYWORD2
 desserrerPince		KEYWORD2
 obstaclePince		KEYWORD2
 ignoreCapteurPince	KEYWORD2
+arreterPince		KEYWORD2
+attrapperPalet		KEYWORD2

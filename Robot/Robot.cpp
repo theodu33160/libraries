@@ -16,6 +16,7 @@ Robot::Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float 
     m_posY = 0; // =
     m_encodeurPrecedentGauche = m_roueGauche->getCodeur(); //normalement ils valent 0 au dÃ©but
     m_encodeurPrecedentDroit = m_roueDroite->getCodeur();
+    Robot::setIntegralSaturation(2);
 
     pinMode(pinDemarrageOutput,OUTPUT);
     pinMode(pinDemarrageInput,INPUT_PULLUP);
@@ -64,7 +65,7 @@ void Robot::debug()
     Serial.print("\t° ");
     Serial.print(m_angle);
 
-
+/*
     Serial.print("\t\tC_rot° ");
     Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
     Serial.print("\tC_vit ");
@@ -75,7 +76,7 @@ void Robot::debug()
     Serial.print(m_distance);
     Serial.print("\t#");
     Serial.print(m_etape);
-/*
+
     Serial.print("\t");
     Serial.print(m_angleComputedSvrPt);
     Serial.print(m_angleComputedSvrPt);
@@ -96,7 +97,6 @@ void Robot::reglagePinceManuel()
       }
       else
       {
-        digitalWrite(ledON,LOW);
         digitalWrite(ledEtape2,LOW); //led fermeture
         digitalWrite(ledEtape4, LOW); //led ouverture
         analogWrite(pinInputPince, 0);
@@ -172,11 +172,22 @@ void Robot::sensMoteurPince(int sens)
     digitalWrite(pinIN1Pince, HIGH);
     digitalWrite(pinIN2Pince, LOW);
   }
-  if (sens == -1) //sens qui desserre la pince
+  else if (sens == -1) //sens qui desserre la pince
   {
     digitalWrite(pinIN1Pince, LOW);
     digitalWrite(pinIN2Pince, HIGH);
   }
+  else      // on arrete la pince
+  {
+      digitalWrite(pinIN1Pince, LOW);
+      digitalWrite(pinIN2Pince, LOW);
+  }
+}
+
+void Robot::arreterPince()
+{
+    analogWrite(pinInputPince, 0);
+    Robot::sensMoteurPince(0);
 }
 
 bool Robot::obstaclePince()
@@ -201,11 +212,26 @@ void Robot::ignoreCapteurPince()
     digitalWrite(ledArretUrgence,HIGH);
 }
 
+bool Robot::attrapperPalet()
+{
+  digitalWrite(ledEtapeFinie,LOW);
+  while (!Robot::serrerPince()) {}
+  unsigned long t0 = millis();
+  while(millis()-t0<1000)
+  {
+   //Robot::ignoreCapteurPince();
+   Robot::desserrerPince();
+  }
+  while (!Robot::serrerPince()) {}
+  digitalWrite(ledEtapeFinie,HIGH);
+  return true;
+}
+
 void Robot::initLeds()
 {
     byte tableauLed[8] = {ledON, ledJaune, ledArretUrgence, ledEtapeFinie, ledEtape1, ledEtape2, ledEtape3, ledEtape4};
     allumerLeds();
-    delay(500);
+    delay(300);
 
     for (int i=0;i<8;i++)
     {
@@ -297,7 +323,7 @@ void Robot::allerRetour(float x, float y)
     switch (m_etape)
     {
     case 0 :
-        if (Robot::suivrePoint(x,y,2))
+        if (Robot::suivrePoint(x,y,5))
         {
             m_compteur++;
             digitalWrite(ledEtape1,HIGH);
@@ -315,7 +341,7 @@ void Robot::allerRetour(float x, float y)
         }
         break;
     case 1 :
-        if (Robot::tournerPrecis(angleInit+180,1))
+        if (Robot::tournerPrecis(angleInit+180,2))
         {
             m_compteur++;
             digitalWrite(ledEtape2,HIGH);
@@ -333,7 +359,7 @@ void Robot::allerRetour(float x, float y)
         }
         break;
     case 2 :
-        if (Robot::suivrePoint(xInit,yInit,2))
+        if (Robot::suivrePoint(xInit,yInit,5))
         {
             m_compteur++;
             digitalWrite(ledEtape3,HIGH);
@@ -350,7 +376,7 @@ void Robot::allerRetour(float x, float y)
         }
         break;
     case 3 :
-        if (Robot::tournerPrecis(angleInit,1))
+        if (Robot::tournerPrecis(angleInit,2))
         {
             m_compteur++;
             digitalWrite(ledEtape4,HIGH);
@@ -366,31 +392,6 @@ void Robot::allerRetour(float x, float y)
             m_etape++;
         }
         break;
-/*
-    case 4 :
-        if (Robot::suivrePoint(xInit,yInit,2))
-        {
-            m_compteur++;
-            digitalWrite(ledEtape1,HIGH);
-            digitalWrite(ledEtape2,HIGH);
-            digitalWrite(ledEtape3,HIGH);
-            digitalWrite(ledEtape4,HIGH);
-        }
-        else
-        {
-            m_compteur = 0;
-            digitalWrite(ledEtape1,LOW);
-            digitalWrite(ledEtape2,LOW);
-            digitalWrite(ledEtape3,LOW);
-            digitalWrite(ledEtape4,LOW);
-        }
-        if (m_compteur > 2000)
-        {
-            m_compteur = 0;
-            m_etape++;
-        }
-        break;
-*/
     default :
         m_etape = 0;
         break;
