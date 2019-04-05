@@ -52,8 +52,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(codeurGauche2), motorCodeurIncrementalGB, CHANGE);
   attachInterrupt(digitalPinToInterrupt(codeurDroite1), motorCodeurIncrementalDA, CHANGE);
   attachInterrupt(digitalPinToInterrupt(codeurDroite2), motorCodeurIncrementalDB, CHANGE);
-  while(!monRobot.desserrerPince()) {}
-  monRobot.initLeds();
+  while(!monRobot.desserrerPince() and !monRobot.iniLedsNB()) {}
   //delay(2000);
   //monRobot.jeuLeds();
 }

@@ -229,7 +229,6 @@ bool Robot::attrapperPalet()
 
 void Robot::initLeds()
 {
-    byte tableauLed[8] = {ledON, ledJaune, ledArretUrgence, ledEtapeFinie, ledEtape1, ledEtape2, ledEtape3, ledEtape4};
     allumerLeds();
     delay(300);
 
@@ -249,18 +248,82 @@ void Robot::initLeds()
 
     for (int i=0;i<8*3;i++)
     {
-        digitalWrite(tableauLed[i%8],HIGH);
-        digitalWrite(tableauLed[(i-3)%8], LOW);
         delay(50);
     }
     delay(50);
     eteindreLeds();
 }
 
+bool Robot::initLedsNB()
+{
+    if(!initLedsSetuped)
+    {
+        initLedsSetuped = true;
+        tInit = millis();
+        m_compteur =0;
+        m_etape = 0;
+    }
+    switch (m_etape)
+    {
+    case 0:
+
+        allumerLeds();
+        m_etape++;
+        break;
+    case 1:
+        if(millis()-tInit>300)
+        {
+            eteindreLeds();
+            m_etape++;
+        }
+        break;
+    case 2:
+        if(millis()-tInit>350+50*m_compteur)
+        {
+            digitalWrite(tableauLed[m_compteur],HIGH);
+            m_compteur++;
+        }
+        if (m_compteur >=8)
+        {
+            m_compteur =0;
+            m_etape++;
+        }
+        break;
+    case 3:
+        if(millis()-tInit>550+m_compteur*50)
+        {
+            digitalWrite(tableauLed[m_compteur],LOW);
+            m_compteur++;
+        }
+        if (m_compteur >=8)
+        {
+            m_compteur =0;
+            m_etape++;
+        }
+        break;
+    case 4:
+        if(millis()-tInit>1000+m_compteur*50)
+        {
+            digitalWrite(tableauLed[m_compteur%8],HIGH);
+            digitalWrite(tableauLed[(m_compteur-3)%8], LOW);
+            m_compteur++;
+        }
+        if (m_compteur >=24)
+        {
+            eteindreLeds();
+            initLedsSetuped = false;
+            return true;
+        }
+        break;
+    default:
+        initLedsSetuped = false;
+        break;
+    }
+    return false;
+}
+
 void Robot::jeuLeds()
 {
-    byte tableauLed[8] = {ledON, ledJaune, ledArretUrgence, ledEtapeFinie, ledEtape1, ledEtape2, ledEtape3, ledEtape4};
-
     allumerLeds();
     delay(800);
     eteindreLeds();

@@ -45,7 +45,10 @@ void setup()
   monRobot.setDistanceCorrecteur(0.01,0.2,0);
   monRobot.setAngleSvrPtCorrecteur(0.25,0.25,0);
   monRobot.setRapportAvancerTourner(0);
-  monRobot.initLeds();
+  while(!monRobot.initLedsNB())
+  {
+    monRobot.reglagePinceManuel();
+  }
   //delay(2000);
   //monRobot.jeuLeds();
   //monRobot.setPosition(300,0,180);

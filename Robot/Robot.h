@@ -37,6 +37,7 @@ public :
 
     void jeuLeds();
     void initLeds();
+    bool initLedsNB();
     void allumerLeds();
     void eteindreLeds();
 
@@ -86,6 +87,7 @@ private :
     byte ledEtape2 = 36;
     byte ledEtape3 = 37;
     byte ledEtape4 = 38;
+    byte tableauLed[8] = {ledON, ledJaune, ledArretUrgence, ledEtapeFinie, ledEtape1, ledEtape2, ledEtape3, ledEtape4};
 
 
     float m_empattement;        //distance entre le centre de rotation du robot et une roue en mm !
@@ -127,7 +129,9 @@ private :
     bool m_angleComputed;
 
     //variables pour le maniement séquentiel du robot
-    unsigned int m_compteur = 0;
+    bool initLedsSetuped = false;
+    unsigned long tInit;
+    int m_compteur = 0;
     int m_etape = 0; //permet de savoir où en est le robot dans la rÃ©alisation des taches
     bool m_setupAllerRetour = false;
     float xInit = m_posX;

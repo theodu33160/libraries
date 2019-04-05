@@ -20,7 +20,8 @@ modulo180		KEYWORD2
 debug			KEYWORD2
 
 jeuLeds			KEYWORD2
-intiLeds		KEYWORD2
+initLeds		KEYWORD2
+initLedsNB		KEYWORD2
 allumerLeds		KEYWORD2
 eteindreLeds		KEYWORD2
 
