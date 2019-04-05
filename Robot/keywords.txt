@@ -27,7 +27,12 @@ eteindreLeds		KEYWORD2
 allumerLedEtape		KEYWORD2
 eteindreLedEtape	KEYWORD2
 
+initCote		KEYWORD2
+setCoordonneesBluenium	KEYWORD2
+setCoordonneesGoldonium	KEYWORD2
+setCoordonneesBalance	KEYWORD2
 tirageTirette		KEYWORD2
+
 reglagePinceManuel	KEYWORD2
 sensMoteurPince		KEYWORD2
 serrerPince		KEYWORD2

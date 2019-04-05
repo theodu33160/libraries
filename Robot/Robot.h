@@ -43,7 +43,12 @@ public :
     void allumerLedEtape(byte etape);
     void eteindreLedEtape(byte etape);
 
+    void initCote();
+    void setCoordonneesBluenium(float x, float y, float angle);
+    void setCoordonneesGoldonium(float x, float y, float angle);
+    void setCoordonneesBalance(float x, float y, float angle);
     bool tirageTirette();
+
     void reglagePinceManuel();
     void sensMoteurPince(int sens);
     bool serrerPince();
@@ -62,6 +67,13 @@ private :
     // Variables TIERETTE
     byte pinDemarrageOutput = 48;
     byte pinDemarrageInput = 49;
+
+
+    //Variable positionnement terrain
+    byte pinChoixCote = 50;
+    float coordonneesBluenium[3];
+    float coordonneesGoldonium[3];
+    float coordonneesBalance[3];
 
     //Variables PINCE
     byte pinOuverturePince = 45;

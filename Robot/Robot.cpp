@@ -84,6 +84,24 @@ void Robot::debug()
     Serial.println();
 }
 
+void Robot::initCote()
+{
+    if(digitalRead(pinChoixCote()))
+    {//coté jaune-orange
+        setPosition(150,600,0);//X, Y, angle abs
+        coordonneesBluenium =  {1635 , 270 , -90}; //X, Y, angle abs
+        coordonneesGoldonium = {2224 , 180 , -90};
+        coordonneesBalance =   {1300 , 1500 , 90};
+    }
+    else
+    {//coté violet
+        setPosition(3000-150,600,180);
+        coordonneesBluenium =  {3000-1635 , 270 , -90}; //X, Y, angle abs
+        coordonneesGoldonium = {3000-2224 , 180 , -90};
+        coordonneesBalance =   {3000-1300 , 1500 , 90};
+    }
+}
+
 void Robot::allumerLedEtape(byte etape)
 {
     digitalWrite(tableauLed[4+etape%4],HIGH);

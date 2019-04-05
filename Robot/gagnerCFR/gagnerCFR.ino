@@ -39,7 +39,7 @@ Robot monRobot = Robot(&moteurGauche,&moteurDroit, 207.5/2, 40); //roue gauche, 
 
 void setup() 
 { 
-  monRobot.allumerLeds();
+  monRobot.initLedsNB();
   TCCR3B = TCCR3B & 0b11111000 | 0x01;  //permet d'augmenter la fréquence du pwm des pins 5,3 et 2 au maximum (31 250Hz)
   TCCR4B = TCCR4B & 0b11111000 | 0x01;  //permet d'augmenter la fréquence du pwm des pins 8,7 et 6 au maximum (31 250Hz)
   
@@ -57,7 +57,10 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(codeurDroite2), motorCodeurIncrementalDB, CHANGE);
 
   monRobot.setPosition(75,600,0);
-  monRobot.eteindreLeds();
+  monRobot.initCote();
+  monRobot.setCoordonneesBluenium(1635 , 270 , -90);
+  monRobot.setCoordonneesGoldonium(2224 , 180 , -90);
+  monRobot.setCoordonneesBalance(1300 , 1500 , 90);
   
   while(!monRobot.initLedsNB())
   {
