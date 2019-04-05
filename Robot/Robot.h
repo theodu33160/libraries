@@ -143,9 +143,19 @@ private :
 
     long m_i=0; // C'est un compteur utilisé dans la fonction enregistrement
 
-
-
-
+    long int *m_tabTemps;
+    float *m_tabVitG;
+    float *m_tabVitD;
+    double *m_tabPosX;
+    double *m_tabPosY;
+    double *m_tabAngle;
+    double *m_tabDist;
+    int *m_tabConsVG;
+    int *m_tabConsVD;
+    double *m_tabConsRot;
+    double *m_tabConsVMoy;
+    double *m_tabConsAngleAbsolu;
+    byte *m_tabEtape;
 
 
 };

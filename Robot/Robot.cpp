@@ -86,69 +86,57 @@ void Robot::debug()
 
 void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
 {
-    //if (!Serial.available()) Serial.begin(1000000);
+    if (!Serial.available()) Serial.begin(1000000);
+    long tempsAbsolu;
+    long tinit;
     const int nbMesures=int(duree/periode);
     if(m_i==0) //initilisation des tableaux lors du premier appel de la fonction
     {
-        long int *tabTemps;
-        float *tabVitG;
-        float *tabVitD;
-        double *tabPosX;
-        double *tabPosY;
-        double *tabAngle;
-        double *tabDist;
-        int *tabConsVG;
-        int *tabConsVD;
-        double *tabConsRot;
-        double *tabConsVMoy;
-        double *tabConsAngleAbsolu;
-        byte *tabEtape;
 
-        tabTemps = malloc(nbMesures*sizeof(long int));
-        tabVitG = malloc(nbMesures*sizeof(float));
-        tabVitD = malloc(nbMesures*sizeof(float));
-        tabPosX = malloc(nbMesures*sizeof(double));
-        tabPosY = malloc(nbMesures*sizeof(double));
-        tabAngle = malloc(nbMesures*sizeof(double));
-        tabDist = malloc(nbMesures*sizeof(double));
-        tabConsVG = malloc(nbMesures*sizeof(int));
-        tabConsVD = malloc(nbMesures*sizeof(int));
-        tabConsVMoy = malloc(nbMesures*sizeof(double));
-        tabConsRot = malloc(nbMesures*sizeof(double));
-        tabConsAngleAbsolu = malloc(nbMesures*sizeof(double));
-        tabEtape = malloc(nbMesures*sizeof(byte));
-        long tempsAbsolu=millis()
-        long tinit=tempsAbsolu;
-
-
+        m_tabTemps = malloc(nbMesures*sizeof(long int));
+        m_tabVitG = malloc(nbMesures*sizeof(float));
+        m_tabVitD = malloc(nbMesures*sizeof(float));
+        m_tabPosX = malloc(nbMesures*sizeof(double));
+        m_tabPosY = malloc(nbMesures*sizeof(double));
+        m_tabAngle = malloc(nbMesures*sizeof(double));
+        m_tabDist = malloc(nbMesures*sizeof(double));
+        m_tabConsVG = malloc(nbMesures*sizeof(int));
+        m_tabConsVD = malloc(nbMesures*sizeof(int));
+        m_tabConsVMoy = malloc(nbMesures*sizeof(double));
+        m_tabConsRot = malloc(nbMesures*sizeof(double));
+        m_tabConsAngleAbsolu = malloc(nbMesures*sizeof(double));
+        m_tabEtape = malloc(nbMesures*sizeof(byte));
+        tempsAbsolu=millis();
+        tinit=tempsAbsolu;
     }
+
     if(m_i<nbMesures)
     {
         if(millis()-tempsAbsolu>=periode)
         {
-            tabTemps[m_i]=millis()-tinit;
+            m_tabTemps[m_i]=millis()-tinit;
             if(mes)
             {
-                tabVitG[m_i]=roueGauche->getVitesse();
-                tabVitD[m_i]=roueDroite->getVitesse();
-                tabPosX[m_i]=m_posX;
-                tabPosY[m_i]=m_posY;
-                tabAngle[m_i]=m_angle;
-                tabDist[m_i]=m_distance;
+                m_tabVitG[m_i]=m_roueGauche->getVitesse();
+                m_tabVitD[m_i]=m_roueDroite->getVitesse();
+                m_tabPosX[m_i]=m_posX;
+                m_tabPosY[m_i]=m_posY;
+                m_tabAngle[m_i]=m_angle;
+                m_tabDist[m_i]=m_distance;
             }
 
             if(cons)
             {
-                tabConsVG[m_i]=m_vg;
-                tabConsVD[m_i]=m_vd;
-                tabConsRot[m_i]=m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt);
-                tabConsVMoy[m_i]=m_vitesseMoyenne;
-                tabConsAngleAbsolu[m_i]=m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt);
+                m_tabConsVG[m_i]=m_vg;
+                m_tabConsVD[m_i]=m_vd;
+                m_tabConsRot[m_i]=m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt);
+                m_tabConsVMoy[m_i]=m_vitesseMoyenne;
+                m_tabConsAngleAbsolu[m_i]=m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt);
             }
 
             if(etape)
             {
-                tabEtape[m_i]=m_etape;
+                m_tabEtape[m_i]=m_etape;
             }
 
             m_i++;
@@ -159,7 +147,7 @@ void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
         Serial.println("tableau temps : ");
         for(int k=0;k<nbMesures;k++)
         {
-            Serial.println(tabTemps[k]);
+            Serial.println(m_tabTemps[k]);
         }
 
         if(mes)
@@ -167,32 +155,32 @@ void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
             Serial.println("Tableau vitesse Gauche : ");
             for(int l=0;l<nbMesures;l++)
             {
-                Serial.println(vitesseG[l]);
+                Serial.println(m_tabVitG[l]);
             }
             Serial.println("Tableau vitesse Droite : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(vitesseD[m]);
+                Serial.println(m_tabVitD[m]);
             }
             Serial.println("Tableau position selon X : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabPosX[m]);
+                Serial.println(m_tabPosX[m]);
             }
             Serial.println("Tableau position selon Y : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabPosY[m]);
+                Serial.println(m_tabPosY[m]);
             }
             Serial.println("Tableau angle absolu : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabAngle[m]);
+                Serial.println(m_tabAngle[m]);
             }
             Serial.println("Tableau distance : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabDist[m]);
+                Serial.println(m_tabDist[m]);
             }
         }
 
@@ -201,27 +189,27 @@ void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
             Serial.println("Tableau consigne vitesse Gauche : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabConsVG[m]);
+                Serial.println(m_tabConsVG[m]);
             }
             Serial.println("Tableau consigne vitesse Droite : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabConsVD[m]);
+                Serial.println(m_tabConsVD[m]);
             }
             Serial.println("Tableau consigne vitesse Moyenne : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabConsVMoy[m]);
+                Serial.println(m_tabConsVMoy[m]);
             }
             Serial.println("Tableau consigne rotation : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabConsRot[m]);
+                Serial.println(m_tabConsRot[m]);
             }
             Serial.println("Tableau consigne angle absolu : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabConsAngleAbsolu[m]);
+                Serial.println(m_tabConsAngleAbsolu[m]);
             }
         }
 
@@ -230,25 +218,25 @@ void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
             Serial.println("Tableau numéro étape : ");
             for(int m=0;m<nbMesures;m++)
             {
-                Serial.println(tabEtape[m]);
+                Serial.println(m_tabEtape[m]);
             }
         }
         m_i++;
       }
     else{
-        free(tabTemps);
-        free(tabVitG);
-        free(tabVitD);
-        free(tabPosX);
-        free(tabPosY);
-        free(tabAngle);
-        free(tabDist);
-        free(tabConsVG);
-        free(tabConsVD);
-        free(tabConsRot);
-        free(tabConsVMoy);
-        free(tabConsAngleAbsolu);
-        free(tabEtape);
+        free(m_tabTemps);
+        free(m_tabVitG);
+        free(m_tabVitD);
+        free(m_tabPosX);
+        free(m_tabPosY);
+        free(m_tabAngle);
+        free(m_tabDist);
+        free(m_tabConsVG);
+        free(m_tabConsVD);
+        free(m_tabConsRot);
+        free(m_tabConsVMoy);
+        free(m_tabConsAngleAbsolu);
+        free(m_tabEtape);
         }
 }
 
