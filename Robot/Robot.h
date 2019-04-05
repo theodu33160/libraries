@@ -121,8 +121,8 @@ private :
     double m_consigneDistance = 0; //consigne pour le PID en distance
     double m_distance;   // entrée du PID
     double m_vitesseMoyenne; // sotie du PID
-    double m_vg; //consigne de vitesse du moteur gauche
-    double m_vd; //consigne de vitesse du moteur droit
+    int m_vg; //consigne de vitesse du moteur gauche
+    int m_vd; //consigne de vitesse du moteur droit
     float m_Kpd = 0.6;
     float m_Kid = 0.15;
     float m_Kdd = 0;
@@ -140,6 +140,13 @@ private :
     PID correctionDistance = PID(&m_distance, &m_vitesseMoyenne, &m_consigneDistance, m_Kpd, m_Kid, m_Kdd, false);
     PID correctionAngleSvrPt = PID(&m_angle, &m_vitesseRotationSvrPt, &m_consigneAngleSvrPt, m_KpSvrPt, m_KiSvrPt, m_KdSvrPt, true);
     float m_rapportAvancerTourner = 0*0.05;
+
+    long m_i=0; // C'est un compteur utilisé dans la fonction enregistrement
+
+
+
+
+
 
 };
 #endif // ROBOT_H
