@@ -84,6 +84,16 @@ void Robot::debug()
     Serial.println();
 }
 
+void Robot::allumerLedEtape(byte etape)
+{
+    digitalWrite(tableauLed[4+etape%4],HIGH);
+}
+
+void Robot::eteindreLedEtape(byte etape)
+{
+    digitalWrite(tableauLed[4+etape%4],LOW);
+}
+
 void Robot::reglagePinceManuel()
 {
     digitalWrite(ledArretUrgence,LOW);
@@ -212,7 +222,7 @@ void Robot::ignoreCapteurPince()
     digitalWrite(ledArretUrgence,HIGH);
 }
 
-bool Robot::attrapperPalet()
+bool Robot::attraperPalet()
 {
   digitalWrite(ledEtapeFinie,LOW);
   while (!Robot::serrerPince()) {}

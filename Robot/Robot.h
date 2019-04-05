@@ -40,6 +40,8 @@ public :
     bool initLedsNB();
     void allumerLeds();
     void eteindreLeds();
+    void allumerLedEtape(byte etape);
+    void eteindreLedEtape(byte etape);
 
     bool tirageTirette();
     void reglagePinceManuel();
@@ -49,7 +51,7 @@ public :
     void arreterPince();
     bool obstaclePince();
     void ignoreCapteurPince();
-    bool attrapperPalet();
+    bool attraperPalet();
 
 private :
     DCMotor* m_roueGauche;
