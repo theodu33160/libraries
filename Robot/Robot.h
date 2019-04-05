@@ -49,6 +49,7 @@ public :
     bool obstaclePince();
     void ignoreCapteurPince();
 
+
 private :
     DCMotor* m_roueGauche;
     DCMotor* m_roueDroite;
@@ -120,6 +121,8 @@ private :
     double m_consigneDistance = 0; //consigne pour le PID en distance
     double m_distance;   // entrée du PID
     double m_vitesseMoyenne; // sotie du PID
+    double m_vg; //consigne de vitesse du moteur gauche
+    double m_vd; //consigne de vitesse du moteur droit
     float m_Kpd = 0.6;
     float m_Kid = 0.15;
     float m_Kdd = 0;

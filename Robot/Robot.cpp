@@ -84,6 +84,140 @@ void Robot::debug()
     Serial.println();
 }
 
+void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
+{
+    //if (!Serial.available()) Serial.begin(1000000);
+    int nbMesures=int(duree/periode);
+    if(i<nbMesures)
+    {
+        if(millis()-tempsAbsolu>=periode)
+        {
+            tabTemps[i]=millis()-tinit;
+            if(mes)
+            {
+                tabVitG[i]=roueGauche->getVitesse();
+                tabVitD[i]=roueDroite->getVitesse();
+                tabPosX[i]=m_posX;
+                tabPosY[i]=m_posY;
+                tabAngle[i]=m_angle;
+                tabDist[i]=m_distance;
+            }
+
+            if(cons)
+            {
+                tabConsVG[i]=m_vg;
+                tabConsVD[i]=m_vd;
+                tabConsRot[i]=m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt);
+                tabConsVitMoy[i]=m_vitesseMoyenne;
+                tabConsAngleAbsolu[i]=m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt);
+            }
+
+            if(etape)
+            {
+                tabEtape[i]=m_etape;
+            }
+
+            i++;
+        }
+    }
+    else if (i==nbMesures)
+    {
+        Serial.println("tableau temps : ");
+        for(int k=0;k<nbMesures;k++)
+        {
+            Serial.println(tabTemps[k]);
+        }
+
+        if(mes)
+        {
+            Serial.println("Tableau vitesse Gauche : ");
+            for(int l=0;l<nbMesures;l++)
+            {
+                Serial.println(vitesseG[l]);
+            }
+            Serial.println("Tableau vitesse Droite : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(vitesseD[m]);
+            }
+            Serial.println("Tableau position selon X : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabPosX[m]);
+            }
+            Serial.println("Tableau position selon Y : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabPosY[m]);
+            }
+            Serial.println("Tableau angle absolu : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabAngeAbsolu[m]);
+            }
+            Serial.println("Tableau distance : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabDist[m]);
+            }
+        }
+
+        if(cons)
+        {
+            Serial.println("Tableau consigne vitesse Gauche : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabConsVG[m]);
+            }
+            Serial.println("Tableau consigne vitesse Droite : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabConsVD[m]);
+            }
+            Serial.println("Tableau consigne vitesse Moyenne : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabConsVMoy[m]);
+            }
+            Serial.println("Tableau consigne rotation : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabConsRot[m]);
+            }
+            Serial.println("Tableau consigne angle absolu : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabConsAngleAbsolu[m]);
+            }
+        }
+
+        if(etape)
+        {
+            Serial.println("Tableau numéro étape : ");
+            for(int m=0;m<nbMesures;m++)
+            {
+                Serial.println(tabEtape[m]);
+            }
+        }
+        i++;
+      }
+    else{
+        free(tabTemps);
+        free(tabVitG);
+        free(tabVitD);
+        free(tabPosX);
+        free(tabPosY);
+        free(tabAngle);
+        free(tabDist);
+        free(tabConsVG);
+        free(tabConsVD);
+        free(tabConsRot);
+        free(tabConsVitMoy);
+        free(tabConsAngleAbsolu);
+        free(tabEtape);
+        }
+}
+
 void Robot::reglagePinceManuel()
 {
     if (!digitalRead(pinSerragePince))
@@ -523,7 +657,9 @@ void Robot::avancerTourner(int v, int theta)
   theta = constrain(theta, -128, 127);
   v = constrain(v, -128 + abs(theta), 127 - abs(theta));
   //#if PONT_EN_H
-  avancer(v-theta,v+theta);
+  m_vg=v-theta;
+  m_vd=v+theta;
+  avancer(m_vg,m_vd);
   //#endif
 
   /*
@@ -540,10 +676,10 @@ void Robot::avancerTourner(int v, int theta)
   */
 }
 
-void Robot::avancer(int vg, int vd)
+void Robot::avancer(m_vg, m_vd)
 {
-    vg = constrain(vg,-128,127);
-    vd = constrain(vd,-128,127);
+    m_vg = constrain(vg,-128,127);
+    m_vd = constrain(vd,-128,127);
     //#ifdef PONT_EN_H
     m_roueGauche->tourneRPM(vg);
     m_roueDroite->tourneRPM(vd);
