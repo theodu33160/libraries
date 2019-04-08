@@ -112,7 +112,6 @@ private :
     double m_angleInterSouris;
     double m_encodeurPrecedentGauche;
     double m_encodeurPrecedentDroit;
-    byte m_acceleration=5;
 
 
     //Variables pour les correcteurs d'asservissement

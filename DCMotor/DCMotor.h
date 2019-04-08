@@ -23,6 +23,7 @@ public:
     void setPID(float kp, float ki, float kd);
     void setDivisionFrequence(byte facteur);
     void setPeriode(int periode);
+    void setAcceleration(byte acc);
 
 private:
     //-----------------DONNEES MESURE VITESSE-------------------
@@ -40,6 +41,7 @@ private:
     float m_previousError=0;
     float m_command=0;
     float m_previousCommand=0;
+    byte m_acc = 20;     //acceleration en tour par minute par 50 ms
     byte m_division_frequence = 0x01; // la fréquence vaut 62500Hz ou 31250Hz (fréquence maximale fournie par la PWM => provient de la fréquence du quartz / 256)
 
     //----PID----------PARAMETRES THEORIQUES----------------------------

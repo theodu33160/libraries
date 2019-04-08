@@ -645,7 +645,8 @@ void Robot::avancer(int vg, int vd)
 
 void Robot::setAcceleration(byte acc)
 {
-  m_acceleration = acc;
+  m_roueGauche->setAcceleration(acc);
+  m_roueDroite->setAcceleration(acc);
 }
 
 void Robot::setPosition(double x, double y, double angle)
