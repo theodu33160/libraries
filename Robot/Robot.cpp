@@ -5,7 +5,7 @@
 //Constructor :
 Robot::Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float rayonRoues) // : rajouter un héritage ...  float empattement = 127.5, float rayonRoues = 49.5)
 {
-    Serial.begin(1000000);
+    //Serial.begin(1000000);
 //    Serial.print("battery level : ");
 //    Serial.println(Robot::getBattery()/10);
     m_roueGauche = roueGauche;
@@ -89,8 +89,9 @@ void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
     if (!Serial.available()) Serial.begin(1000000);
     long tempsAbsolu;
     long tinit;
-    const int nbMesures=int(duree/periode);
-    if(m_i==0) //initilisation des tableaux lors du premier appel de la fonction
+    const long nbMesures= int(duree/periode);
+
+    if(m_indice==0) //initilisation des tableaux lors du premier appel de la fonction
     {
 
         m_tabTemps = malloc(nbMesures*sizeof(long int));
@@ -108,41 +109,43 @@ void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
         m_tabEtape = malloc(nbMesures*sizeof(byte));
         tempsAbsolu=millis();
         tinit=tempsAbsolu;
+        m_indice++;
     }
 
-    if(m_i<nbMesures)
+    if(m_indice<nbMesures)
     {
         if(millis()-tempsAbsolu>=periode)
         {
-            m_tabTemps[m_i]=millis()-tinit;
+            m_tabTemps[m_indice]=millis()-tinit;
             if(mes)
             {
-                m_tabVitG[m_i]=m_roueGauche->getVitesse();
-                m_tabVitD[m_i]=m_roueDroite->getVitesse();
-                m_tabPosX[m_i]=m_posX;
-                m_tabPosY[m_i]=m_posY;
-                m_tabAngle[m_i]=m_angle;
-                m_tabDist[m_i]=m_distance;
+                m_tabVitG[m_indice]=m_roueGauche->getVitesse();
+                m_tabVitD[m_indice]=m_roueDroite->getVitesse();
+                m_tabPosX[m_indice]=m_posX;
+                m_tabPosY[m_indice]=m_posY;
+                m_tabAngle[m_indice]=m_angle;
+                m_tabDist[m_indice]=m_distance;
             }
 
             if(cons)
             {
-                m_tabConsVG[m_i]=m_vg;
-                m_tabConsVD[m_i]=m_vd;
-                m_tabConsRot[m_i]=m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt);
-                m_tabConsVMoy[m_i]=m_vitesseMoyenne;
-                m_tabConsAngleAbsolu[m_i]=m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt);
+                m_tabConsVG[m_indice]=m_vg;
+                m_tabConsVD[m_indice]=m_vd;
+                m_tabConsRot[m_indice]=m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt);
+                m_tabConsVMoy[m_indice]=m_vitesseMoyenne;
+                m_tabConsAngleAbsolu[m_indice]=m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt);
             }
 
             if(etape)
             {
-                m_tabEtape[m_i]=m_etape;
+                m_tabEtape[m_indice]=m_etape;
             }
 
-            m_i++;
+            m_indice++;
         }
+    tempsAbsolu=millis();
     }
-    else if (m_i==nbMesures)
+    else if (m_indice==nbMesures)
     {
         Serial.println("tableau temps : ");
         for(int k=0;k<nbMesures;k++)
@@ -221,7 +224,7 @@ void Robot::enregistrer(int duree, int periode, bool mes, bool cons, bool etape)
                 Serial.println(m_tabEtape[m]);
             }
         }
-        m_i++;
+        m_indice++;
       }
     else{
         free(m_tabTemps);
@@ -765,6 +768,10 @@ float Robot::modulo180(float angle) //retourne un angle entre -180 et 180°
   return angle - 360 * floor((angle + 180) / 360);
 }
 
+long Robot::getComptI()
+{
+    return m_indice;
+}
 
 void Robot::allumerLeds()
 {

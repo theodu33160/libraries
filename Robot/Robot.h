@@ -49,6 +49,7 @@ public :
     bool obstaclePince();
     void ignoreCapteurPince();
 
+    long getComptI();
 
 private :
     DCMotor* m_roueGauche;
@@ -141,7 +142,7 @@ private :
     PID correctionAngleSvrPt = PID(&m_angle, &m_vitesseRotationSvrPt, &m_consigneAngleSvrPt, m_KpSvrPt, m_KiSvrPt, m_KdSvrPt, true);
     float m_rapportAvancerTourner = 0*0.05;
 
-    long m_i=0; // C'est un compteur utilisé dans la fonction enregistrement
+    long m_indice=0; // C'est un compteur utilisé dans la fonction enregistrement
 
     long int *m_tabTemps;
     float *m_tabVitG;
