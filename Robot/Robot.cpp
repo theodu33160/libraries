@@ -1,5 +1,5 @@
 
-#include <Robot.h>
+#include  <Robot.h>
 
 
 //Constructor :
@@ -586,7 +586,7 @@ void Robot::actualiserPosition() // tourne Ã  une visteese x1 pour le moteur 1 
   if (abs(nbPasEncodeurGauche) + abs(nbPasEncodeurDroit) < 3000)
   {
     //dans un intervalle de temps :
-    double distance_parcourue_roue_gauche = nbPasEncodeurGauche * 2 * PI * m_rayon / m_roueGauche->getReducteur(); //il faut surement rajouter le rapport de rÃ©duction du moteur                       // ici on calcule la distance parcourue. Pour cela, on estime que le temps d'exÃ©cution de l'algo est faible, et le seul facteur limitant est
+    double distance_parcourue_roue_gauche = nbPasEncodeurGauche * 2 * PI * m_rayon / m_roueGauche->getReducteur(); //rapport de rÃ©duction du moteur*nombre de tics par tour de moteur                         // ici on calcule la distance parcourue. Pour cela, on estime que le temps d'exÃ©cution de l'algo est faible, et le seul facteur limitant est
     double distance_parcourue_roue_droite = nbPasEncodeurDroit * 2 * PI * m_rayon / m_roueDroite->getReducteur();
     double distance_parcourue = (distance_parcourue_roue_gauche + distance_parcourue_roue_droite) / 2;     // on constate avec un raisonmment physique que la distance parcourue par le ce,tre du robot est la moitiÃ© de la somme de celles parcourues par chacunes de ses roues
     m_angle = m_angle + 180/PI*atan((distance_parcourue_roue_gauche - distance_parcourue_roue_droite) / (2 * m_empattement));             // cf simple calme d'angles dans un triangle + ajout de la fonction arctan ðŸ™‚
