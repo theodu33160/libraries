@@ -45,7 +45,7 @@ public :
 
     void initCote();
     void setCoordonneesBluenium(float x, float y, float angle);
-    void setCoordonneesGoldonium(float x, float y, float angle);
+    void setCoordonneesGoldenium(float x, float y, float angle);
     void setCoordonneesBalance(float x, float y, float angle);
     bool tirageTirette();
 
@@ -72,7 +72,7 @@ private :
     //Variable positionnement terrain
     byte pinChoixCote = 50;
     float coordonneesBluenium[3];
-    float coordonneesGoldonium[3];
+    float coordonneesGoldenium[3];
     float coordonneesBalance[3];
 
     //Variables PINCE
@@ -109,13 +109,16 @@ private :
     double m_angle; // = 0                        // Sotck l'angle du robot au cours du temps, il va quand mÃªme rester Ã  dÃ©finir un cotÃ© + et un -
     double m_posX; //
     double m_posY; // =
+    int m_vg = 0;
+    int m_vd = 0;
+    int m_acc = 1;
     double m_angleInterSouris;
     double m_encodeurPrecedentGauche;
     double m_encodeurPrecedentDroit;
 
 
     //Variables pour les correcteurs d'asservissement
-    byte m_periode = 5;
+    byte m_periode = 20;
     int m_lastTime =0;
 
     double m_consigneAngle; // consigne pour le correcteur PID en angle
@@ -136,7 +139,7 @@ private :
     double m_consigneDistance = 0; //consigne pour le PID en distance
     double m_distance;   // entrée du PID
     double m_vitesseMoyenne; // sotie du PID
-    float m_Kpd = 0.2;
+    float m_Kpd = 20;
     float m_Kid = 0.2;
     float m_Kdd = 0;
     bool m_angleComputed;

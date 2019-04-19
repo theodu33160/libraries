@@ -58,48 +58,54 @@ void Robot::debug()
     if (!Serial.available()) Serial.begin(1000000);
     //Serial.print("temps\t");
     Serial.print(millis());
-    Serial.print("\tX ");
+    Serial.print("\tX\t");
     Serial.print(m_posX);
-    Serial.print("\tY ");
+
+    Serial.print("\tY\t");
     Serial.print(m_posY);
-    Serial.print("\t° ");
+    Serial.print("\t°\t");
     Serial.print(m_angle);
 
-/*
-    Serial.print("\t\tC_rot° ");
-    Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
-    Serial.print("\tC_vit ");
-    Serial.print(m_vitesseMoyenne);
-    Serial.print("\tC_angle :");
-    Serial.print(m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt));
-    Serial.print("\td ");
-    Serial.print(m_distance);
-    Serial.print("\t#");
-    Serial.print(m_etape);
 
+    Serial.print("\t\tC_rot°\t");
+    Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
+    Serial.print("\tC_vit\t");
+    Serial.print(m_vitesseMoyenne);
+    Serial.print("\tC_angle\t");
+    Serial.print(m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt));
+    Serial.print("\td\t");
+    Serial.print(m_distance);
+    Serial.print("\t#\t");
+    Serial.print(m_etape);
+/*
     Serial.print("\t");
     Serial.print(m_angleComputedSvrPt);
     Serial.print(m_angleComputedSvrPt);
-*/
+*/    Serial.print("\tvmot\t");
+    Serial.print(m_vg);
+    Serial.print("\t");
+    Serial.print(m_vd);
+
     Serial.println();
 }
 
 void Robot::initCote()
 {
-    if(digitalRead(pinChoixCote()))
+    if(digitalRead(pinChoixCote))
     {//coté jaune-orange
         setPosition(150,600,0);//X, Y, angle abs
-        coordonneesBluenium =  {1635 , 270 , -90}; //X, Y, angle abs
-        coordonneesGoldonium = {2224 , 180 , -90};
-        coordonneesBalance =   {1300 , 1500 , 90};
+        setCoordonneesBluenium(1635 , 270 , -90); //X, Y, angle abs
+        setCoordonneesGoldenium(2224 , 180 , -90);
+        setCoordonneesBalance(1300 , 1500 , 90);
     }
     else
     {//coté violet
         setPosition(3000-150,600,180);
-        coordonneesBluenium =  {3000-1635 , 270 , -90}; //X, Y, angle abs
-        coordonneesGoldonium = {3000-2224 , 180 , -90};
-        coordonneesBalance =   {3000-1300 , 1500 , 90};
+        setCoordonneesBluenium(3000-1635 , 270 , -90); //X, Y, angle abs
+        setCoordonneesGoldenium(3000-2224 , 180 , -90);
+        setCoordonneesBalance(3000-1300 , 1500 , 90);
     }
+
 }
 
 void Robot::allumerLedEtape(byte etape)
@@ -291,6 +297,7 @@ bool Robot::initLedsNB()
         m_compteur =0;
         m_etape = 0;
     }
+
     switch (m_etape)
     {
     case 0:
@@ -635,18 +642,19 @@ void Robot::avancerTourner(int v, int theta)
 
 void Robot::avancer(int vg, int vd)
 {
-    vg = constrain(vg,-128,127);
-    vd = constrain(vd,-128,127);
-    //#ifdef PONT_EN_H
-    m_roueGauche->tourneRPM(vg);
-    m_roueDroite->tourneRPM(vd);
-    //#endif
-}
+    if (m_vg*vg<0) m_vg =0;
+    else if (abs(m_vg)<abs(vg)) m_vg = constrain(vg,m_vg-m_acc,m_vg+m_acc);
+    else m_vg = vg;
+    if (m_vd*vd<0) m_vd =0;
+    else if (abs(m_vd)<abs(vd)) m_vd = constrain(vd,m_vd-m_acc,m_vd+m_acc);
+    else m_vd = vd;
+    //m_vg = vg;
+    //m_vd = vd;
 
-void Robot::setAcceleration(byte acc)
-{
-  m_roueGauche->setAcceleration(acc);
-  m_roueDroite->setAcceleration(acc);
+    //#ifdef PONT_EN_H
+    m_roueGauche->tourneRPM(m_vg);
+    m_roueDroite->tourneRPM(m_vd);
+    //#endif
 }
 
 void Robot::setPosition(double x, double y, double angle)
@@ -732,4 +740,25 @@ void Robot::setIntegralSaturation(float sat)
 {
     correctionAngle.SetIntegralSaturation(sat);
     correctionDistance.SetIntegralSaturation(sat);
+}
+
+void Robot::setCoordonneesBluenium(float x, float y, float angle)
+{
+    coordonneesBluenium[0]=x;
+    coordonneesBluenium[1]=y;
+    coordonneesBluenium[2]=angle;
+}
+
+void Robot::setCoordonneesGoldenium(float x, float y, float angle)
+{
+    coordonneesGoldenium[0]=x;
+    coordonneesGoldenium[1]=y;
+    coordonneesGoldenium[2]=angle;
+}
+
+void Robot::setCoordonneesBalance(float x, float y, float angle)
+{
+    coordonneesBalance[0]=x;
+    coordonneesBalance[1]=y;
+    coordonneesBalance[2]=angle;
 }

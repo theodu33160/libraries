@@ -44,7 +44,7 @@ void DCMotor::tourneRPM(float consigne)
     {
         actualiserVitesse();
         m_error = consigne-m_vitesse;
-        m_command = m_previousCommand + constrain(m_Kp * m_error + m_Ki * m_previousError,-acc/10,acc/10); //équation de récurrence PI
+        m_command = m_previousCommand + m_Kp * m_error + m_Ki * m_previousError; //équation de récurrence PI
         int commandePuissance = constrain(int(m_command),-130,130);
 
         envoiCommande(commandePuissance);
@@ -123,9 +123,4 @@ float DCMotor::getVitesse()
 float DCMotor::getReducteur()
 {
     return m_a;
-}
-
-void DCMotor::setAcceleration(byte acc)
-{
-    m_acc = acc;
 }

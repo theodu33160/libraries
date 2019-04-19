@@ -23,14 +23,13 @@ public:
     void setPID(float kp, float ki, float kd);
     void setDivisionFrequence(byte facteur);
     void setPeriode(int periode);
-    void setAcceleration(byte acc);
 
 private:
     //-----------------DONNEES MESURE VITESSE-------------------
     byte m_voieA;   //broche de la voie A du codeur incrémental associé au moteur
     byte m_voieB;   //broche de la voie B du codeur incrémental associé au moteur
     unsigned long m_temps_absolu;
-    int m_periode = 5; //période d'acquisition en ms
+    int m_periode = 20; //période d'acquisition en ms
     volatile long m_compteur=0;
     long m_precedentCompteur=0;
     float m_vitesse=0;
@@ -41,7 +40,6 @@ private:
     float m_previousError=0;
     float m_command=0;
     float m_previousCommand=0;
-    byte m_acc = 20;     //acceleration en tour par minute par 50 ms
     byte m_division_frequence = 0x01; // la fréquence vaut 62500Hz ou 31250Hz (fréquence maximale fournie par la PWM => provient de la fréquence du quartz / 256)
 
     //----PID----------PARAMETRES THEORIQUES----------------------------
