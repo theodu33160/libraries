@@ -66,12 +66,12 @@ private :
     PS2MouseEgab* m_sourisDroite;
 
     // Variables TIERETTE
-    byte pinDemarrageOutput = 48;
-    byte pinDemarrageInput = 49;
-
+    byte pinDemarrageOutput = 51;
+    byte pinDemarrageInput = 52;
 
     //Variable positionnement terrain
-    byte pinChoixCote = 50;
+    byte pinChoixCote =43;
+    byte pinOutputCote = 41;
     float coordonneesBluenium[3];
     float coordonneesGoldenium[3];
     float coordonneesBalance[3];

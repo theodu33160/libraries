@@ -20,6 +20,8 @@ Robot::Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float 
 
     pinMode(pinDemarrageOutput,OUTPUT);
     pinMode(pinDemarrageInput,INPUT_PULLUP);
+    pinMode(pinChoixCote, INPUT_PULLUP);
+    pinMode(pinOutputCote, OUTPUT);
 
     pinMode(pinInterrupteurPince,OUTPUT);
     pinMode(pinOuverturePince,INPUT_PULLUP);
@@ -129,8 +131,9 @@ void Robot::setDebugMode(byte mode)
 
 void Robot::initCote()
 {
+    digitalWrite(pinOutputCote,LOW);
     if(digitalRead(pinChoixCote))
-    {//coté jaune-orange
+    {//coté jaune
         setPosition(150,600,0);//X, Y, angle abs
         setCoordonneesBluenium(1635 , 270 , -90); //X, Y, angle abs
         setCoordonneesGoldenium(2224 , 180 , -90);
