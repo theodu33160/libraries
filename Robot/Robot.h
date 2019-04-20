@@ -34,6 +34,7 @@ public :
     void setRapportAvancerTourner(float r);
     float modulo180(float angle);
     void debug();
+    void setDebugMode(byte mode);
 
     void jeuLeds();
     void initLeds();
@@ -103,6 +104,8 @@ private :
     byte ledEtape4 = 38;
     byte tableauLed[8] = {ledON, ledJaune, ledArretUrgence, ledEtapeFinie, ledEtape1, ledEtape2, ledEtape3, ledEtape4};
 
+    byte m_debugMode=1;
+
 
     float m_empattement;        //distance entre le centre de rotation du robot et une roue en mm !
     float m_rayon; //37.64         //rayon des roues en mm
@@ -161,25 +164,3 @@ private :
 
 };
 #endif // ROBOT_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

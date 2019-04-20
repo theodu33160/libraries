@@ -56,37 +56,75 @@ Robot::Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float 
 void Robot::debug()
 {
     if (!Serial.available()) Serial.begin(1000000);
-    //Serial.print("temps\t");
-    Serial.print(millis());
-    Serial.print("\tX\t");
-    Serial.print(m_posX);
 
-    Serial.print("\tY\t");
-    Serial.print(m_posY);
-    Serial.print("\t°\t");
-    Serial.print(m_angle);
+    if (m_debugMode==1)
+    {
+        Serial.print("t\t");
+        Serial.print(millis());
+        Serial.print("\tX\t");
+        Serial.print(m_posX);
 
+        Serial.print("\tY\t");
+        Serial.print(m_posY);
+        Serial.print("\tangle\t");
+        Serial.print(m_angle);
 
-    Serial.print("\t\tC_rot°\t");
-    Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
-    Serial.print("\tC_vit\t");
-    Serial.print(m_vitesseMoyenne);
-    Serial.print("\tC_angle\t");
-    Serial.print(m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt));
-    Serial.print("\td\t");
-    Serial.print(m_distance);
-    Serial.print("\t#\t");
-    Serial.print(m_etape);
-/*
-    Serial.print("\t");
-    Serial.print(m_angleComputedSvrPt);
-    Serial.print(m_angleComputedSvrPt);
-*/    Serial.print("\tvmot\t");
-    Serial.print(m_vg);
-    Serial.print("\t");
-    Serial.print(m_vd);
+        Serial.print("\t\tC_rot°\t");
+        Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
+        Serial.print("\tC_vit\t");
+        Serial.print(m_vitesseMoyenne);
+        Serial.print("\tC_angle\t");
+        Serial.print(m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt));
+        Serial.print("\td\t");
+        Serial.print(m_distance);
+    /*    Serial.print("\t étape\t");
+        Serial.print(m_etape);
+
+        Serial.print("\t");
+        Serial.print(m_angleComputedSvrPt);
+        Serial.print(m_angleComputedSvrPt);
+    */    Serial.print("\tvMotG\t");
+        Serial.print(m_vg);
+        Serial.print("\tvMotD\t");
+        Serial.print(m_vd);
+    }
+    else if (m_debugMode == 2)
+    {
+        Serial.println();
+        Serial.print("t\tX\tY\tangle\tC_rot\tC_vit\tC_angle\td\tvMotG\tvMotD");
+        m_debugMode++;
+    }
+    else if(m_debugMode ==3)
+    {
+
+        Serial.print(millis());
+        Serial.print("\t");
+        Serial.print(m_posX);
+        Serial.print("\t");
+        Serial.print(m_posY);
+        Serial.print("\t");
+        Serial.print(m_angle);
+        Serial.print("\t");
+        Serial.print(m_vitesseRotationSvrPt*m_modeSvrPt+m_vitesseRotation*(!m_modeSvrPt));
+        Serial.print("\t");
+        Serial.print(m_vitesseMoyenne);
+        Serial.print("\t");
+        Serial.print(m_consigneAngleSvrPt*m_modeSvrPt+m_consigneAngle*(!m_modeSvrPt));
+        Serial.print("\t");
+        Serial.print(m_distance);
+        Serial.print("\t");
+        Serial.print(m_vg);
+        Serial.print("\t");
+        Serial.print(m_vd);
+    }
 
     Serial.println();
+}
+
+void Robot::setDebugMode(byte mode)
+{
+    m_debugMode = mode;
+    if (mode ==2) debug();
 }
 
 void Robot::initCote()
