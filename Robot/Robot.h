@@ -13,8 +13,8 @@ public :
     //Constructor :
     Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float rayonRoues);
 //    Robot(DCMotor *roueGauche, DCMotor *roueDroite, float empattement, float rayonRoues, PS2MouseEgab* sourisGache, PS2MouseEgab* sourisDroite, float angleInterSouris);
-    void avancerTourner(int v, int theta);          // vitesseMoyenne, vitesseRotation
-    void avancer(int vg, int vd); //vitesse roue gauche, vitesse roue droite
+    void avancerTourner(float v, float theta);          // vitesseMoyenne, vitesseRotation
+    void avancer(float vg, float vd); //vitesse roue gauche, vitesse roue droite
     bool tournerPrecis(float theta, float precision);       // angle, precision
     bool suivrePoint(float xCible, float yCible, float precision);   //x, y, precision
     void allerRetour(float x,float y); //x, y
@@ -24,11 +24,12 @@ public :
     double getPosX();
     double getPosY();
     double getAngle();
-    void setAcceleration(byte acc);
+    void setAcceleration(float acc);
     void setAngleCorrecteur(float kp, float ki, float kd);       //P, I, D
     void setDistanceCorrecteur(float kp, float ki, float kd);    //P, I, D
     void setAngleSvrPtCorrecteur(float kp, float ki, float kd);
     void setIntegralSaturation(float sat);
+    void setPeriode(byte periode);
 
     float getRapportAvancerTourner();
     void setRapportAvancerTourner(float r);
@@ -49,6 +50,7 @@ public :
     void setCoordonneesGoldenium(float x, float y, float angle);
     void setCoordonneesBalance(float x, float y, float angle);
     bool tirageTirette();
+    void initTime();
 
     void reglagePinceManuel();
     void sensMoteurPince(int sens);
@@ -112,17 +114,18 @@ private :
     double m_angle; // = 0                        // Sotck l'angle du robot au cours du temps, il va quand mÃªme rester Ã  dÃ©finir un cotÃ© + et un -
     double m_posX; //
     double m_posY; // =
-    int m_vg = 0;
-    int m_vd = 0;
-    int m_acc = 1;
+    float m_vg = 0;
+    float m_vd = 0;
+    float m_acc = 0.1;
     double m_angleInterSouris;
     double m_encodeurPrecedentGauche;
     double m_encodeurPrecedentDroit;
 
 
     //Variables pour les correcteurs d'asservissement
-    byte m_periode = 20;
+    byte m_periode = 5;
     int m_lastTime =0;
+    unsigned long tInit=0;
 
     double m_consigneAngle; // consigne pour le correcteur PID en angle
     double m_vitesseRotation; // sortie du PID pour régler l'angle absolu du robot
@@ -149,7 +152,6 @@ private :
 
     //variables pour le maniement séquentiel du robot
     bool initLedsSetuped = false;
-    unsigned long tInit;
     int m_compteur = 0;
     int m_etape = 0; //permet de savoir où en est le robot dans la rÃ©alisation des taches
     bool m_setupAllerRetour = false;

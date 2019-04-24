@@ -18,6 +18,9 @@ getRapportAvancerTourner	KEYWORD2
 setRapportAvancerTourner	KEYWORD2
 modulo180		KEYWORD2
 debug			KEYWORD2
+setPeriode		KEYWORD2
+setDebugMode		KEYWORD2
+initTime		KEYWORD2
 
 jeuLeds			KEYWORD2
 initLeds		KEYWORD2
