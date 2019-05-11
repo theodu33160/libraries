@@ -141,16 +141,16 @@ void Robot::initCote()
     digitalWrite(pinOutputCote,LOW);
     if(digitalRead(pinChoixCote))
     {//coté jaune
-        setPosition(150,600,0);//X, Y, angle abs
-        setCoordonneesBluenium(1635 , 270 , -90); //X, Y, angle abs
-        setCoordonneesGoldenium(2224 , 180 , -90);
+        setPosition(85,418,0);//X, Y, angle abs
+        setCoordonneesBluenium(1635 , 170 , -90); //X, Y, angle abs
+        setCoordonneesGoldenium(2236 , 180 , -90);
         setCoordonneesBalance(1300 , 1500 , 90);
     }
     else
     {//coté violet
-        setPosition(3000-150,600,180);
+        setPosition(3000-85,418,180);
         setCoordonneesBluenium(3000-1635 , 270 , -90); //X, Y, angle abs
-        setCoordonneesGoldenium(3000-2224 , 180 , -90);
+        setCoordonneesGoldenium(3000-2236 , 180 , -90);
         setCoordonneesBalance(3000-1300 , 1500 , 90);
     }
 
