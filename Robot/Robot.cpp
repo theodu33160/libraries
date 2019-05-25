@@ -694,7 +694,7 @@ bool Robot::tournerPrecis(float theta, float precision) // le robot vise l'angle
     return true;
   }
   digitalWrite(ledEtapeFinie, LOW);
-  Robot::avancerTourner(0, -m_vitesseRotation);
+  Robot::avancerTourner(0, m_vitesseRotation);
   return false;
 }
 
@@ -727,7 +727,7 @@ bool Robot::suivrePoint(float xCible, float yCible, float precision)
   if (abs(m_distance) >= precision) //vérifier que abs fonctionne tout le temps avec un float !
   {
       digitalWrite(ledEtapeFinie, LOW);
-      Robot::avancerTourner((m_vitesseMoyenne / (1 + abs(m_vitesseRotationSvrPt)*m_rapportAvancerTourner)), -m_vitesseRotationSvrPt);
+      Robot::avancerTourner((m_vitesseMoyenne / (1 + abs(m_vitesseRotationSvrPt)*m_rapportAvancerTourner)), m_vitesseRotationSvrPt);
       return false;
   }
   else

@@ -7,7 +7,7 @@
 #include "PS2MouseEgab.h"
 #include <PID_v1.h>
 
-#define BAUDRATE 115200
+#define BAUDRATE 1000000
 
 class Robot
 {
