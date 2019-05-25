@@ -8,7 +8,8 @@
 
 class ReperageSouris {
   public:
-    ReperageSouris(PS2MouseEgab* mouse1, PS2MouseEgab *mouse2, float alpha); // Alpha Angle entre le repère de la première souris et celui de la deuxième.
+
+    ReperageSouris(PS2MouseEgab* mouse1, PS2MouseEgab *mouse2, float alpha, float distanceSouris); // Alpha Angle entre le repère de la première souris et celui de la deuxième.
 
     void actualiserPosition(void);
     float getPositionX(void);
@@ -24,6 +25,8 @@ private:
     float m_y=0;
     float m_theta=0;
     float m_alpha;
+    float m_distanceSouris;
+
     PS2MouseEgab* m_mouse1;
     PS2MouseEgab* m_mouse2;
 

@@ -93,12 +93,16 @@ void PS2MouseEgab::actualiserPosition(){
   uint8_t dataY=read(); // Attention prend 55 µs Donc au total l'actualisation de la position d'une souris prend 880µs ~ 1ms (ça passe mais voir si on peut optimiser)
   bool negx=bitRead(m_stat,4);
   bool negy=bitRead(m_stat,5);
-  int dx = (int)dataX;
-  int dy = (int)dataY;
-  if(negx) dx|=0xFF00;
-  if(negy) dy|=0xFF00;
-  m_x+=((float)dx/(float)m_n);
-  m_y+=((float)dy/(float)m_n);
+
+  int DX = (int)dataX;
+  int DY = (int)dataY;
+  if(negx) DX|=0xFF00;
+  if(negy) DY|=0xFF00;
+  m_dx=((float)DX/m_n);
+  m_dy=((float)DY/m_n);
+  m_x+=m_dx;
+  m_y+=m_dy;
+
 }
 
 void PS2MouseEgab::golo(int pin){
@@ -119,6 +123,15 @@ float PS2MouseEgab::getPositionX(){
 float PS2MouseEgab::getPositionY(){
     return m_y;
 }
+
+float PS2MouseEgab::getDX(){
+    return m_dx;
+}
+
+float PS2MouseEgab::getDY(){
+    return m_dy;
+}
+
 void  PS2MouseEgab::setPositionX(float x){
     m_x=x;
 }

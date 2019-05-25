@@ -4,7 +4,7 @@
 //Constructor :
 Robot::Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float rayonRoues) // : rajouter un héritage ...  float empattement = 127.5, float rayonRoues = 49.5)
 {
-    Serial.begin(1000000);
+    Serial.begin(BAUDRATE);
 //    Serial.print("battery level : ");
 //    Serial.println(Robot::getBattery()/10);
     m_roueGauche = roueGauche;
@@ -42,7 +42,7 @@ Robot::Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float 
 
 /*Robot::Robot(DCMotor *roueGauche, DCMotor *roueDroite, float empattement, float rayonRoues, PS2MouseEgab* sourisGache, PS2MouseEgab* sourisDroite, float angleInterSouris)
 {
-    Serial.begin(1000000);
+    Serial.begin(BAUDRATE);
     Serial.print("battery level : ");
 //    Serial.println(Robot::getBattery()/10);
     m_roueGauche = roueGauche;
@@ -59,7 +59,7 @@ Robot::Robot(DCMotor* roueGauche, DCMotor* roueDroite, float empattement, float 
 
 void Robot::debug()
 {
-    if (!Serial.available()) Serial.begin(1000000);
+    if (!Serial.available()) Serial.begin(BAUDRATE);
 
     if (m_debugMode==1)
     {
@@ -136,22 +136,40 @@ void Robot::setDebugMode(byte mode)
     if (mode ==2) debug();
 }
 
+void Robot::envoieDonneesLidar()
+{
+    if(millis()-m_lastTime>m_periode*3) m_lastTime = millis()-m_periode;
+    if(millis()-m_lastTime>=m_periode)
+    {
+        m_lastTime+=m_periode;
+        if (!Serial.available()) Serial.begin(BAUDRATE);
+        Serial.write(0x40);
+        Serial.print(getPosX());
+        Serial.write(0xA8);
+        Serial.print(getPosY());
+        Serial.write(0xB9);
+        Serial.print(getAngle());
+        Serial.write(0x0C);
+    }
+}
+
+
 void Robot::initCote()
 {
     digitalWrite(pinOutputCote,LOW);
     if(digitalRead(pinChoixCote))
     {//coté jaune
-        setPosition(85,418,0);//X, Y, angle abs
-        setCoordonneesBluenium(1635 , 170 , -90); //X, Y, angle abs
-        setCoordonneesGoldenium(2236 , 180 , -90);
-        setCoordonneesBalance(1300 , 1500 , 90);
+        setPosition(418,85,90);//X, Y, angle abs
+        setCoordonneesBluenium(270 , 1635 , -90); //X, Y, angle abs
+        setCoordonneesGoldenium(180 , 2236 , -90);
+        setCoordonneesBalance(1500 , 1300 , 90);
     }
     else
     {//coté violet
-        setPosition(3000-85,418,180);
-        setCoordonneesBluenium(3000-1635 , 270 , -90); //X, Y, angle abs
-        setCoordonneesGoldenium(3000-2236 , 180 , -90);
-        setCoordonneesBalance(3000-1300 , 1500 , 90);
+        setPosition(3000-418,85,-90);
+        setCoordonneesBluenium(3000-270 , 1635 , 0); //X, Y, angle abs
+        setCoordonneesGoldenium(3000-180 , 2236 , 0);
+        setCoordonneesBalance(3000-1500 , 1300 , 180);
     }
 
 }
@@ -563,50 +581,105 @@ bool Robot::tirageTirette()
 
 void Robot::actualiserPosition() // tourne Ã  une visteese x1 pour le moteur 1 et idem pour le 2 : x1 = GAUCHE
 {
-  //#ifdef CODEURS
-  double encodeurGauche = m_roueGauche->getCodeur();
-  double encodeurDroit = m_roueDroite->getCodeur();
-  int nbPasEncodeurGauche = encodeurGauche - m_encodeurPrecedentGauche;
-  int nbPasEncodeurDroit = encodeurDroit - m_encodeurPrecedentDroit;
-  m_encodeurPrecedentGauche = encodeurGauche;
-  m_encodeurPrecedentDroit = encodeurDroit;
+  /*
+  if(Serial.available()>=7)
+  {//Reception des données sur lidar
+      double x,y,angle;
 
-  //Pour évite les gros bugs non physiques
-  if (abs(nbPasEncodeurGauche) + abs(nbPasEncodeurDroit) < 3000)
+      if (Serial.read()==0x40)
+      {
+          char temp[9];
+          byte i =0;
+          temp[i]=Serial.read();
+          while (temp[i] != 0xA8 and i<8)
+          { //ATTENTION SI ON ENVOIE PLUS DE 9 CHAR
+              i++;
+              temp[i]=Serial.read();
+          }
+          x = String(temp).toDouble();
+
+          i =0;
+          temp[i]=Serial.read();
+          while (temp[i] != 0xB9 and i<8)
+          { //ATTENTION SI ON ENVOIE PLUS DE 9 CHAR
+              temp[i]=Serial.read();
+              i++;
+          }
+          y = String(temp).toDouble();
+
+          i =0;
+          temp[i]=Serial.read();
+          while (temp[i] != 0x0C and i<8)
+          { //ATTENTION SI ON ENVOIE PLUS DE 9 CHAR
+              temp[i]=Serial.read();
+              i++;
+          }
+          angle = String(temp).toDouble();
+      }
+      else
+      {
+          Serial.begin(BAUDRATE);
+          Serial.println("Erreur de reception, pas de bit de start");
+      }
+      //Vérifier ici si les résultats ne sont pas absurdes.
+      if(abs(getPosX()-x)>10 or abs(getPosY()-y)>10 or abs(getAngle()-angle)>0.1)
+      {
+          Serial.print("lidar x : ");
+          Serial.print(x);
+          Serial.print("\ty ");
+          Serial.print(y);
+          Serial.print("\tangle ");
+          Serial.println(angle);
+          setPosition(x,y,angle);
+      }
+  }
+  else
   {
-    //dans un intervalle de temps :
-    double distance_parcourue_roue_gauche = nbPasEncodeurGauche * 2 * PI * m_rayon / m_roueGauche->getReducteur(); //il faut surement rajouter le rapport de rÃ©duction du moteur                       // ici on calcule la distance parcourue. Pour cela, on estime que le temps d'exÃ©cution de l'algo est faible, et le seul facteur limitant est
-    double distance_parcourue_roue_droite = nbPasEncodeurDroit * 2 * PI * m_rayon / m_roueDroite->getReducteur();
-    double distance_parcourue = (distance_parcourue_roue_gauche + distance_parcourue_roue_droite) / 2;     // on constate avec un raisonmment physique que la distance parcourue par le ce,tre du robot est la moitiÃ© de la somme de celles parcourues par chacunes de ses roues
-    m_angle = m_angle + 180/PI*atan((distance_parcourue_roue_gauche - distance_parcourue_roue_droite) / (2 * m_empattement));             // cf simple calme d'angles dans un triangle + ajout de la fonction arctan ðŸ™‚
-    m_angle = modulo180(m_angle); // permet d'avoir un angle entre -180 et +180°
-    m_posX += distance_parcourue * cos(PI/180*m_angle);
-    m_posY += distance_parcourue * sin(PI/180*m_angle);
-  }
-  //#endif
-  /*#ifdef SOURIS
-  m_sourisGauche->actualiserPosition();
-  m_sourisDroite->actualiserPosition();
+  */
+      //#ifdef CODEURS
+      double encodeurGauche = m_roueGauche->getCodeur();
+      double encodeurDroit = m_roueDroite->getCodeur();
+      int nbPasEncodeurGauche = encodeurGauche - m_encodeurPrecedentGauche;
+      int nbPasEncodeurDroit = encodeurDroit - m_encodeurPrecedentDroit;
+      m_encodeurPrecedentGauche = encodeurGauche;
+      m_encodeurPrecedentDroit = encodeurDroit;
 
-  float x1=m_sourisGauche->getpositionX();//récupération de l'abscisse de la souris 1 dans son repère (celui de référence par convention).
-  float y1=m_sourisGauche->getpositionY();//récupération de l'ordonnée de la souris 1 dans son repère (celui de référence par convention).
+      //Pour évite les gros bugs non physiques
+      if (abs(nbPasEncodeurGauche) + abs(nbPasEncodeurDroit) < 3000)
+      {
+        //dans un intervalle de temps :
+        double distance_parcourue_roue_gauche = nbPasEncodeurGauche * 2 * PI * m_rayon / m_roueGauche->getReducteur(); //il faut surement rajouter le rapport de rÃ©duction du moteur                       // ici on calcule la distance parcourue. Pour cela, on estime que le temps d'exÃ©cution de l'algo est faible, et le seul facteur limitant est
+        double distance_parcourue_roue_droite = nbPasEncodeurDroit * 2 * PI * m_rayon / m_roueDroite->getReducteur();
+        double distance_parcourue = (distance_parcourue_roue_gauche + distance_parcourue_roue_droite) / 2;     // on constate avec un raisonmment physique que la distance parcourue par le ce,tre du robot est la moitiÃ© de la somme de celles parcourues par chacunes de ses roues
+        m_angle = m_angle - 180/PI*atan((distance_parcourue_roue_gauche - distance_parcourue_roue_droite) / (2 * m_empattement));             // cf simple calme d'angles dans un triangle + ajout de la fonction arctan ðŸ™‚
+        m_angle = modulo180(m_angle); // permet d'avoir un angle entre -180 et +180°
+        m_posX += distance_parcourue * cos(PI/180*m_angle);
+        m_posY += distance_parcourue * sin(PI/180*m_angle);
+      }
+      //#endif
+      /*#ifdef SOURIS
+      m_sourisGauche->actualiserPosition();
+      m_sourisDroite->actualiserPosition();
 
-  float X2=m_sourisDroite->getpositionX();//récupération de l'abscisse de la souris 2 dans son repère.
-  float X2=m_sourisDroite->getpositionY();//récupération de l'abscisse de la souris 2 dans son repère.
+      float x1=m_sourisGauche->getpositionX();//récupération de l'abscisse de la souris 1 dans son repère (celui de référence par convention).
+      float y1=m_sourisGauche->getpositionY();//récupération de l'ordonnée de la souris 1 dans son repère (celui de référence par convention).
 
-  float x2=X2*cos(m_angleInterSouris)-Y2*sin(m_angleInterSouris); //calcul des coordonées de la souris 2 dans le repère de la souris 1.
-  float y2=X2*sin(m_angleInterSouris)+Y2*cos(m_angleInterSouris);
+      float X2=m_sourisDroite->getpositionX();//récupération de l'abscisse de la souris 2 dans son repère.
+      float X2=m_sourisDroite->getpositionY();//récupération de l'abscisse de la souris 2 dans son repère.
 
-  m_posX+=(x1+x2)/2; // calcul de la position du centre du robot /!\ On considère sue le centre du robot est le milieu du segment reliant les deux souris
-  m_posY+=(y1+y2)/2;
-  if(x2==x1){
-      m_angle=(2*(y2>y1)-1)*(PI/2);
-  }
-  else {
-      m_angle=atan((y2-y1)/(x2-x1)); //calcul de la position angulaire du robot.
-  }
-  #endif
-*/
+      float x2=X2*cos(m_angleInterSouris)-Y2*sin(m_angleInterSouris); //calcul des coordonées de la souris 2 dans le repère de la souris 1.
+      float y2=X2*sin(m_angleInterSouris)+Y2*cos(m_angleInterSouris);
+
+      m_posX+=(x1+x2)/2; // calcul de la position du centre du robot /!\ On considère sue le centre du robot est le milieu du segment reliant les deux souris
+      m_posY+=(y1+y2)/2;
+      if(x2==x1){
+          m_angle=(2*(y2>y1)-1)*(PI/2);
+      }
+      else {
+          m_angle=atan((y2-y1)/(x2-x1)); //calcul de la position angulaire du robot.
+      }
+      #endif
+    */
 }
 
 
@@ -644,7 +717,7 @@ bool Robot::suivrePoint(float xCible, float yCible, float precision)
           if(abs(modulo180(m_angle-m_consigneAngleSvrPt))>90) m_consigneAngleSvrPt=modulo180(180+m_consigneAngleSvrPt);
           m_angleComputedSvrPt = correctionAngleSvrPt.Compute();
 
-          m_lastTime +=m_periode;
+          //m_lastTime +=m_periode;
   }
   else
   {

@@ -7,6 +7,8 @@
 #include "PS2MouseEgab.h"
 #include <PID_v1.h>
 
+#define BAUDRATE 115200
+
 class Robot
 {
 public :
@@ -24,6 +26,7 @@ public :
     double getPosX();
     double getPosY();
     double getAngle();
+    void envoieDonneesLidar();
     void setAcceleration(float acc);
     void setAngleCorrecteur(float kp, float ki, float kd);       //P, I, D
     void setDistanceCorrecteur(float kp, float ki, float kd);    //P, I, D
@@ -86,8 +89,8 @@ private :
     byte pinIN1Pince = 42;
     byte pinIN2Pince = 40;
     byte pinCapteurPince = 15;
-    int m_seuilBlocagePinceBas = 180;
-    int m_seuilBlocagePinceHaut = 400;
+    int m_seuilBlocagePinceBas = 200;
+    int m_seuilBlocagePinceHaut = 450;
     unsigned int tempsDemarrageMoteur = 70;
     bool m_fermetureBloquee = false;
     bool m_ouvertureBloquee = false;
@@ -124,7 +127,7 @@ private :
 
     //Variables pour les correcteurs d'asservissement
     byte m_periode = 5;
-    int m_lastTime =0;
+    int m_lastTime =0; //pour l'envoie des données au lidar
     unsigned long tInit=0;
 
     double m_consigneAngle; // consigne pour le correcteur PID en angle
